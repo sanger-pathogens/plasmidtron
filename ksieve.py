@@ -76,7 +76,7 @@ for set_of_samples in [trait_samples, nontrait_samples]:
 		sample.database_name = database_name
 		sample.file_of_fastq_files =file_of_fastq_files
 
-		kmc_command = "kmc -ci"+options.min_kmers_threshold+" -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
+		kmc_command = "kmc -ci"+str(options.min_kmers_threshold)+" -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
 		print('DEBUG: '+ kmc_command)
 		subprocess.call(kmc_command,shell=True)
 
