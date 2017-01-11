@@ -26,7 +26,13 @@ parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontra
 parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging', default = 0)
 parser.add_argument('--threads',  '-t', help='Number of threads', type=int,  default = 1)
 parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
+parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this', type=int,  default = 20)
 options = parser.parse_args()
+
+if not os.path.exists(options.output_directory):
+    os.makedirs(options.output_directory)
+else:
+	sys.exit("The output directory already exists")
 
 trait_samples = []
 nontrait_samples = []
@@ -55,7 +61,7 @@ with open(options.file_of_nontrait_fastqs) as csvfile:
 # Run kmc to generate kmers for each set of FASTQs
 for set_of_samples in [trait_samples, nontrait_samples]:
 	for sample in set_of_samples:
-		temp_working_dir = tempfile.mkdtemp(dir=os.getcwd())
+		temp_working_dir = tempfile.mkdtemp(dir=options.output_directory)
 		# TODO make sure to strip off path
 		basename = sample.forward_file.replace('_1.fastq.gz','')
 		sample.basename = basename
@@ -70,14 +76,14 @@ for set_of_samples in [trait_samples, nontrait_samples]:
 		sample.database_name = database_name
 		sample.file_of_fastq_files =file_of_fastq_files
 
-		kmc_command = "kmc -ci20 -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
+		kmc_command = "kmc -ci"+options.min_kmers_threshold+" -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
 		print('DEBUG: '+ kmc_command)
 		subprocess.call(kmc_command,shell=True)
 
 # using Complex, create a file describing merging all the traits into one set, non traits into another set, then subtract.
 
 # create complex input file
-temp_working_dir = tempfile.mkdtemp(dir=os.getcwd())
+temp_working_dir = tempfile.mkdtemp(dir=options.output_directory)
 complex_config_filename = temp_working_dir+'/complex_config_file'
 with open(complex_config_filename, 'w') as complex_config_file:
 	complex_config_file.write("INPUT:\n")
@@ -113,7 +119,7 @@ subprocess.call(kmc_complex_command,shell=True)
 # Get the names of the filtered reads for each sample (forward and reverse). Remove the /1 or /2 from the end to get common read name. unique.
 # Open original FASTQ files and filter against the read names. This ensures that the reads are still paired, even if only 1 of the reads hit the kmer database.
 for sample in trait_samples:
-	temp_working_dir_filter = tempfile.mkdtemp(dir=os.getcwd())
+	temp_working_dir_filter = tempfile.mkdtemp(dir=options.output_directory)
 	intermediate_filtered_fastq = temp_working_dir_filter+'/intermediate.fastq'
 	read_names_file = temp_working_dir_filter+'/read_names_file'
 
@@ -140,7 +146,7 @@ for sample in trait_samples:
 	os.remove(read_names_file)
 
 for sample in trait_samples:
-	spades_output_directory = 'spades_'+sample.basename
-	spades_command = 'spades-3.9.0.py --careful --only-assembler -1 '+sample.filtered_forward_file+' -2 '+sample.filtered_reverse_file+' -o '+spades_output_directory
+	spades_output_directory = options.output_directory+'/spades_'+sample.basename
+	spades_command = 'spades-3.9.0.py --careful --only-assembler -k '+ str(options.kmer) +' -1 '+sample.filtered_forward_file+' -2 '+sample.filtered_reverse_file+' -o '+spades_output_directory
 	subprocess.call(spades_command, shell=True)
 	print('DEBUG: '+ spades_command)
