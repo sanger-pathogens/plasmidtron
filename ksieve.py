@@ -15,7 +15,7 @@ class SampleData:
 		self.basename=''
 		self.filtered_forward_file=''
 		self.filtered_reverse_file=''
-			
+
 # input data
 parser = argparse.ArgumentParser(
 	description = 'Plasmid kmers',
@@ -25,7 +25,7 @@ parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait FAS
 parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait FASTQs')
 parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging', default = 0)
 parser.add_argument('--threads',  '-t', help='Number of threads', type=int,  default = 1)
-parser.add_argument('--kmer',     '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
+parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
 options = parser.parse_args()
 
 trait_samples = []
@@ -33,10 +33,10 @@ nontrait_samples = []
 
 # read in the metadata about the fastq files
 with open(options.file_of_trait_fastqs) as csvfile:
-    spreadsheetreader = csv.reader(csvfile, delimiter = ',')
-    for row in spreadsheetreader:
-        forward_fastq_file = row[0]
-        reverse_fastq_file = row[1]
+	spreadsheetreader = csv.reader(csvfile, delimiter = ',')
+	for row in spreadsheetreader:
+		forward_fastq_file = row[0]
+		reverse_fastq_file = row[1]
 		
 		if not os.path.exists(forward_fastq_file) or os.path.exists(reverse_fastq_file):
 			 sys.exit( "The input files dont exist")
@@ -44,14 +44,14 @@ with open(options.file_of_trait_fastqs) as csvfile:
 
 # read in the metadata about the fastq files
 with open(options.file_of_nontrait_fastqs) as csvfile:
-    spreadsheetreader = csv.reader(csvfile, delimiter = ',')
-    for row in spreadsheetreader:
-        forward_fastq_file = row[0]
-        reverse_fastq_file = row[1]
+	spreadsheetreader = csv.reader(csvfile, delimiter = ',')
+	for row in spreadsheetreader:
+		forward_fastq_file = row[0]
+		reverse_fastq_file = row[1]
 		
 		if not os.path.exists(forward_fastq_file) or os.path.exists(reverse_fastq_file):
 			 sys.exit( "The input files dont exist")
-		nontrait_samples.append( SampleData(forward_fastq_file,reverse_fastq_file) )	
+		nontrait_samples.append( SampleData(forward_fastq_file,reverse_fastq_file) )
 
 # Run kmc to generate kmers for each set of FASTQs
 for set_of_samples in [trait_samples, nontrait_samples]:
@@ -73,9 +73,9 @@ for set_of_samples in [trait_samples, nontrait_samples]:
 		
 		kmc_command = "kmc -ci20 -k"+options.kmer+" @"+file_of_fastq_files+" "+ database_name
 		subprocess.call(kmc_command,shell=True)
-	
+
 # using Complex, create a file describing merging all the traits into one set, non traits into another set, then subtract.
-	
+
 # create complex input file
 temp_working_dir = tempfile.mkdtemp(dir=os.getcwd())
 complex_config_filename = temp_working_dir+'/complex_config_file'
@@ -94,8 +94,8 @@ with open(complex_config_filename, 'w') as complex_config_file:
 		trait_basenames.append(sample.basename)
 	nontrait_basenames = []
 	for sample in nontrait_samples:
-		nontrait_basenames.append(sample.basename)	
-		
+		nontrait_basenames.append(sample.basename)
+	
 	complex_config_file.write('('+  trait_basenames.join('+') +')')
 	complex_config_file.write('-')
 	complex_config_file.write('('+  nontrait_basenames.join('+') +')')
@@ -109,7 +109,7 @@ subprocess.call(kmc_complex_command,shell=True)
 # For traits only
 # Filter each FASTQ file against kmer database of the differences between traits and non-traits
 
-# Get the names of the filtered reads for each sample (forward and reverse). Remove the /1 or /2 from the end to get common read name. unique. 
+# Get the names of the filtered reads for each sample (forward and reverse). Remove the /1 or /2 from the end to get common read name. unique.
 # Open original FASTQ files and filter against the read names. This ensures that the reads are still paired, even if only 1 of the reads hit the kmer database.
 for sample in trait_samples:
 	temp_working_dir_filter = tempfile.mkdtemp(dir=os.getcwd())
@@ -135,9 +135,9 @@ for sample in trait_samples:
 	# delete intermediate fastq file
 	os.remove(intermediate_filtered_fastq)
 	os.remove(read_names_file)
-	
+
 for sample in trait_samples:
 	spades_output_directory = 'spades_'+sample.basename
-	spades_command = 'spades-3.9.0.py --careful --only-assembler -1 '+sample.forward_file+' -2 '+sample.reverse_file+' -o ' spades_output_directory
+	spades_command = 'spades-3.9.0.py --careful --only-assembler -1 '+sample.forward_file+' -2 '+sample.reverse_file+' -o '+spades_output_directory
 	subprocess.call(spades_command, shell=True)
 	
