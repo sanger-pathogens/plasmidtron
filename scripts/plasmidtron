@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+sys.path.append('../')
+sys.path.append('./')
+from  plasmidtron.PlasmidTron import PlasmidTron
+
+
+# input data
+parser = argparse.ArgumentParser(
+	description = 'A tool to assemble parts of a genome responsible for a trait',
+	usage = 'ksieve [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
+parser.add_argument('output_directory', help='Output directory')
+parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait (case) FASTQs')
+parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait (control) FASTQs')
+parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging', default = 0)
+parser.add_argument('--threads',  '-t', help='Number of threads', type=int,  default = 1)
+parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
+parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this', type=int,  default = 20)
+parser.add_argument('--spades_exec',	 '-s', help='Set the SPAdes executable', type=str,  default = 'spades-3.9.0.py')
+parser.add_argument('--min_contig_len',	 '-l', help='Minimum contig length in final assembly', type=int,  default = 400)
+
+options = parser.parse_args()
+
+plasmid_tron = PlasmidTron(options)
+plasmid_tron.run()
