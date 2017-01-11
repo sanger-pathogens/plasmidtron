@@ -102,11 +102,13 @@ with open(complex_config_filename, 'w') as complex_config_file:
 	for sample in nontrait_samples:
 		nontrait_basenames.append(sample.basename.replace('#','_'))
 
-	complex_config_file.write('('+  '+'.join(trait_basenames) +')')
+	complex_config_file.write('('+  '*'.join(trait_basenames) +')')
 	complex_config_file.write('-')
 	complex_config_file.write('('+  '+'.join(nontrait_basenames) +')')
 	complex_config_file.write("\n")
 	# set operation
+	# shoudl there be an intersection between the trait set???
+	# 
 
 kmc_complex_command = "kmc_tools -t"+str(options.threads)+" complex " + complex_config_filename
 print('DEBUG: '+ kmc_complex_command)
