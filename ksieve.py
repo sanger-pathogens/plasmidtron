@@ -76,7 +76,7 @@ for set_of_samples in [trait_samples, nontrait_samples]:
 		sample.database_name = database_name
 		sample.file_of_fastq_files =file_of_fastq_files
 
-		kmc_command = "kmc -ci"+str(options.min_kmers_threshold)+" -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
+		kmc_command = "kmc -t"+str(options.threads)+" -ci"+str(options.min_kmers_threshold)+" -k"+ str(options.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
 		print('DEBUG: '+ kmc_command)
 		subprocess.call(kmc_command,shell=True)
 
@@ -108,7 +108,7 @@ with open(complex_config_filename, 'w') as complex_config_file:
 	complex_config_file.write("\n")
 	# set operation
 
-kmc_complex_command = "kmc_tools complex " + complex_config_filename
+kmc_complex_command = "kmc_tools -t"+str(options.threads)+" complex " + complex_config_filename
 print('DEBUG: '+ kmc_complex_command)
 subprocess.call(kmc_complex_command,shell=True)
 
@@ -123,7 +123,7 @@ for sample in trait_samples:
 	intermediate_filtered_fastq = temp_working_dir_filter+'/intermediate.fastq'
 	read_names_file = temp_working_dir_filter+'/read_names_file'
 
-	kmc_filter_command = 'kmc_tools filter result @'+sample.file_of_fastq_files+' '+intermediate_filtered_fastq
+	kmc_filter_command = 'kmc_tools -t'+str(options.threads)+' filter result @'+sample.file_of_fastq_files+' '+intermediate_filtered_fastq
 	print('DEBUG: '+ kmc_filter_command)
 	subprocess.call(kmc_filter_command,shell=True)
 
