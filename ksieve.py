@@ -13,6 +13,8 @@ class SampleData:
 			self.database_name = ''
 			self.file_of_fastq_files = ''
 			self.basename=''
+			self.filtered_forward_file=''
+			self.filtered_reverse_file=''
 	
 
 
@@ -112,11 +114,33 @@ subprocess.call(kmc_complex_command,shell=True)
 
 # Get the names of the filtered reads for each sample (forward and reverse). Remove the /1 or /2 from the end to get common read name. unique. 
 # Open original FASTQ files and filter against the read names. This ensures that the reads are still paired, even if only 1 of the reads hit the kmer database.
-
-
-
-# Given kmer database of difference, extract raw reads from each sample, but only for trait set.
-
-# SPAdes assembly of each trait set of reads
-
-# cleanup at the end.
+for sample in trait_samples:
+	temp_working_dir_filter = tempfile.mkdtemp(dir=os.getcwd())
+	intermediate_filtered_fastq = temp_working_dir_filter+'/intermediate.fastq'
+	read_names_file = temp_working_dir_filter+'/read_names_file'
+	
+	kmc_filter_command = 'kmc_tools filter results @'+sample.file_of_fastq_files+' '+intermediate_filtered_fastq
+	subprocess.call(kmc_filter_command,shell=True)
+	
+	read_names_cmd = 'zcat '+intermediate_filtered_fastq + '| awk \'NR%4==1\' > ' + read_names_file
+	subprocess.call(read_names_cmd, shell=True)
+	
+	
+	filtered_forward_file = temp_working_dir_filter+'/sample_1.fastq.gz'
+	sample.filtered_forward_file(filtered_forward_file)
+	
+	filtered_reverse_file = temp_working_dir_filter+'/sample_2.fastq.gz'
+	sample.filtered_reverse_file(filtered_reverse_file)
+	
+	filtered_fastq_command = 'fastaq filter --ids_file '+read_names_file+' --mate_in '+sample.reverse_file+' --mate_out '+sample.filtered_reverse_file+' '+sample.forward_file+ ' '+sample.filtered_forward_file
+	subprocess.call(filtered_fastq_command, shell=True)
+	
+	# delete intermediate fastq file
+	os.remove(intermediate_filtered_fastq)
+	os.remove(read_names_file)
+	
+for sample in trait_samples:
+	spades_output_directory = 'spades_'+sample.basename
+	spades_command = 'spades-3.9.0.py --careful --only-assembler -1 '+sample.forward_file+' -2 '+sample.reverse_file+' -o ' spades_output_directory
+	subprocess.call(spades_command, shell=True)
+	
