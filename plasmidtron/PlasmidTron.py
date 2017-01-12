@@ -23,6 +23,7 @@ class PlasmidTron:
 		self.kmer                    = options.kmer
 		self.min_kmers_threshold     = options.min_kmers_threshold
 		self.spades_exec             = options.spades_exec
+		self.min_contig_len          = options.min_contig_len
 
 	def run(self):
 		if not os.path.exists(self.output_directory):
@@ -55,7 +56,7 @@ class PlasmidTron:
 			kmc_filter.filter_fastq_file_against_kmers()
 		
 		for sample in trait_samples:
-			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec)
+			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec, self.min_contig_len)
 			spades_assembly.run()
 			spades_assembly.remove_small_contigs()
 			print(spades_assembly.filtered_spades_assembly_file() + '\n')

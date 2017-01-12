@@ -15,8 +15,8 @@ class KmcFilter:
 	def store_intermediate_files(self):
 		self.intermediate_filtered_fastq = os.path.join(self.temp_working_dir, 'intermediate.fastq')
 		self.read_names_file = os.path.join(self.temp_working_dir, 'read_names_file')
-		self.sample.filtered_forward_file = os.path.join(self.temp_working_dir_filter, 'sample_1.fastq.gz')
-		self.sample.filtered_reverse_file = os.path.join(self.temp_working_dir_filter, 'sample_2.fastq.gz')
+		self.sample.filtered_forward_file = os.path.join(self.temp_working_dir, 'sample_1.fastq.gz')
+		self.sample.filtered_reverse_file = os.path.join(self.temp_working_dir, 'sample_2.fastq.gz')
 	
 	def kmc_filter_command(self):
 		return ' '.join(['kmc_tools', '-t'+str(self.threads), 'filter', 'result', '@'+self.sample.file_of_fastq_files, self.intermediate_filtered_fastq])
