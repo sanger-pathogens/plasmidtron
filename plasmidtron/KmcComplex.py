@@ -58,8 +58,7 @@ class KmcComplex:
 	
 	def kmc_complex_command(self):
 		return " ".join(['kmc_tools', 
-			'-t' +  str(self.threads), 
-			'-ci' + str(self.min_kmers_threshold),
+			'-t' +  str(self.threads),
 			'complex',
 			self.complex_config_filename ])
 	
