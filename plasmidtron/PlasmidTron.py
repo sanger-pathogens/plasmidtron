@@ -3,6 +3,7 @@ import sys
 import os
 import tempfile
 import subprocess
+import logging
 from plasmidtron.SampleData import SampleData
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
 from plasmidtron.Kmc import Kmc
@@ -10,6 +11,7 @@ from plasmidtron.KmcComplex import KmcComplex
 
 class PlasmidTron:
 	def __init__(self,options):
+		self.logger = logging.getLogger(__name__)
 		self.output_directory        = options.output_directory 
 		self.file_of_trait_fastqs    = options.file_of_trait_fastqs
 		self.file_of_nontrait_fastqs = options.file_of_nontrait_fastqs
@@ -27,19 +29,16 @@ class PlasmidTron:
 		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs)
 		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs)
 		
+		self.logger.info("Generating a kmer database for each sample"))
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
 				kmc_sample.run()
-				
+		
+		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set"))
 		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
 		kmc_complex.run()
 		
-		# For traits only
-		# Filter each FASTQ file against kmer database of the differences between traits and non-traits
-		
-		# Get the names of the filtered reads for each sample (forward and reverse). Remove the /1 or /2 from the end to get common read name. unique.
-		# Open original FASTQ files and filter against the read names. This ensures that the reads are still paired, even if only 1 of the reads hit the kmer database.
 		for sample in trait_samples:
 			temp_working_dir_filter = tempfile.mkdtemp(dir=self.output_directory)
 			intermediate_filtered_fastq = temp_working_dir_filter+'/intermediate.fastq'

@@ -14,6 +14,7 @@ class TestKmc(unittest.TestCase):
 		sample = SampleData('/path/to/sample_1.fastq.gz','/path/to/sample_2.fastq.gz' )
 		i = Kmc(os.getcwd(), sample, 1, 51, 30)
 		self.assertEqual(sample.file_of_fastq_files, i.temp_working_dir+"/fofn")
+		i.cleanup()
 	
 	def test_create_file_of_file_names(self):
 		sample = SampleData('/path/to/sample_1.fastq.gz','/path/to/sample_2.fastq.gz' )
@@ -27,4 +28,5 @@ class TestKmc(unittest.TestCase):
 /path/to/sample_2.fastq.gz
 """
 			self.assertEqual(actual_fofn_content, expected_fofn_content)
+		i.cleanup()
 			

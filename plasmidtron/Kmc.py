@@ -4,6 +4,7 @@ import os
 import tempfile
 import subprocess
 import logging
+import shutil
 from plasmidtron.SampleData import SampleData
 
 class Kmc:
@@ -44,3 +45,5 @@ class Kmc:
 			self.sample.database_name,
 			self.temp_working_dir
 		]
+	def cleanup(self):
+		shutil.rmtree(self.temp_working_dir)
