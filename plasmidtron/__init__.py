@@ -1,5 +1,5 @@
 __all__ = [
-    'common',
+    'plasmidtron',
     'sampledata',
     'spreadsheetparser'
 ]

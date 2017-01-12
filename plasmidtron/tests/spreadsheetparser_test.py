@@ -1,13 +1,11 @@
 import unittest
-import filecmp
 import os
-import re
 import plasmidtron
 
 modules_dir = os.path.dirname(os.path.abspath(spreadsheetparser.__file__))
-data_dir = os.path.join(modules_dir, 'tests', 'data', 'spreadsheet')
+data_dir = os.path.join(modules_dir, 'tests', 'data', 'spreadsheetparser')
 
-class TestCheckSpreadsheet(unittest.TestCase):
+class TestSpreadsheetParser(unittest.TestCase):
     
     def test_invalid_spreadsheet_doesnt_exist(self):
         '''test_invalid_spreadsheet_doesnt_exist'''
