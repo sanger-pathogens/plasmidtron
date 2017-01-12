@@ -46,9 +46,9 @@ class PlasmidTron:
 		kmc_complex.run()
 		
 		# Delete all sample temp directories
-		self.logger.info("Deleting individual kmer databases for samples")
-		for kmc_sample in kmc_samples:
-			kmc_sample.cleanup()
+		#self.logger.info("Deleting individual kmer databases for samples")
+		#for kmc_sample in kmc_samples:
+		#	kmc_sample.cleanup()
 		
 		for sample in trait_samples:
 			kmc_filter = KmcFilter(sample, self.output_directory, self.threads)
