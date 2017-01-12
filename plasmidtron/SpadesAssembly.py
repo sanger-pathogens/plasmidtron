@@ -24,7 +24,7 @@ class SpadesAssembly:
 		return os.path.join(self.spades_output_directory,'filtered_contigs.fasta')
 		
 	def remove_small_contigs(self):
-		with open(self.spades_assembly_file(), "r") as spades_input_file, open(self.filtered_spades_assembly_file, "w") as spades_output_file:
+		with open(self.spades_assembly_file(), "r") as spades_input_file, open(self.filtered_spades_assembly_file(), "w") as spades_output_file:
 			long_sequences = []
 			for record in SeqIO.parse(spades_input_file, "fasta"):
 				if len(record.seq) < self.minimum_length:
@@ -33,4 +33,4 @@ class SpadesAssembly:
 	
 	def run(self):
 		self.logger.info("Assembling sample" )
-		subprocess.call(self.spades_command, shell=True)
+		subprocess.call(self.spades_command(), shell=True)

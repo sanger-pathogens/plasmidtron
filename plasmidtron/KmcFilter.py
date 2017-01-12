@@ -27,14 +27,14 @@ class KmcFilter:
 	
 	def filter_fastq_file_against_kmers(self):
 		self.logger.info("Filter reads against kmer database for sample")
-		subprocess.call(self.kmc_filter_command,shell=True)
+		subprocess.call(self.kmc_filter_command(),shell=True)
 	
 		# The FASTQ file that comes out of kmc doesnt output all pairs, so we have to refilter it to get all mates.
 		fastq_read_names = FastqReadNames(self.intermediate_filtered_fastq, self.read_names_file)
 		fastq_read_names.extract_readnames_from_fastq()
 	
 		# Given a file of read names, pull out the mate paired FASTQ files for the sample
-		subprocess.call(self.filtered_fastq_command, shell=True)
+		subprocess.call(self.filtered_fastq_command(), shell=True)
 		
 		self.cleanup()
 		
