@@ -34,7 +34,7 @@ class KmcFilter:
 		fastq_read_names.extract_readnames_from_fastq()
 	
 		# Given a file of read names, pull out the mate paired FASTQ files for the sample
-		subprocess.call(self.filtered_fastq_command(), shell=True)
+		subprocess.call(self.filtered_fastaq_command(), shell=True)
 		
 		self.cleanup()
 		
