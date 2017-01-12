@@ -2,7 +2,6 @@ import argparse
 import sys
 import os
 import tempfile
-import subprocess
 import logging
 from plasmidtron.SampleData import SampleData
 from plasmidtron.SpreadsheetParser import SpreadsheetParser

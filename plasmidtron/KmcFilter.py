@@ -1,6 +1,7 @@
 import os
 import logging
 import tempfile
+import subprocess
 from plasmidtron.FastqReadNames import FastqReadNames
  
 '''Given a kmer database extract filter a FASTQ file for a sample'''

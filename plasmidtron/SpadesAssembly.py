@@ -1,6 +1,7 @@
 import os
 import logging
 import tempfile
+import subprocess
  
 '''Assemble a filtered sample with SPAdes'''
 class SpadesAssembly:
