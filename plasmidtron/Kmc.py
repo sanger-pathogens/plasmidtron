@@ -37,13 +37,13 @@ class Kmc:
 		self.sample.file_of_fastq_files = os.path.join(self.temp_working_dir, 'fofn')
 	
 	def construct_kmc_command(self):
-		return " ".join['kmc', 
+		return " ".join(['kmc', 
 			'-t' +  str(self.threads), 
 			'-ci' + str(self.min_kmers_threshold),
 			'-k' + str(self.kmer),
 			'@' + self.sample.file_of_fastq_files,
 			self.sample.database_name,
 			self.temp_working_dir
-		]
+		])
 	def cleanup(self):
 		shutil.rmtree(self.temp_working_dir)
