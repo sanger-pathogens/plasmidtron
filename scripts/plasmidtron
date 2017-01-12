@@ -18,6 +18,8 @@ parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging'
 parser.add_argument('--threads',  '-t', help='Number of threads', type=int,  default = 1)
 parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
 parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this', type=int,  default = 20)
+parser.add_argument('--spades_exec',	 '-s', help='Set the SPAdes executable', type=str,  default = 'spades-3.9.0.py')
+
 options = parser.parse_args()
 
 plasmid_tron = PlasmidTron(options)

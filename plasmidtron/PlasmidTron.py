@@ -8,6 +8,9 @@ from plasmidtron.SampleData import SampleData
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
 from plasmidtron.Kmc import Kmc
 from plasmidtron.KmcComplex import KmcComplex
+from plasmidtron.FastqReadNames import FastqReadNames
+from plasmidtron.KmcFilter import KmcFilter
+from plasmidtron.SpadesAssembly import SpadesAssembly
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -19,6 +22,7 @@ class PlasmidTron:
 		self.threads                 = options.threads
 		self.kmer                    = options.kmer
 		self.min_kmers_threshold     = options.min_kmers_threshold
+		self.spades_exec             = options.spades_exec
 
 	def run():
 		if not os.path.exists(self.output_directory):
@@ -30,42 +34,27 @@ class PlasmidTron:
 		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs)
 		
 		self.logger.info("Generating a kmer database for each sample"))
+		kmc_samples =[]
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
 				kmc_sample.run()
+				kmc_samples.append(kmc_sample)
 		
 		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set"))
 		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
 		kmc_complex.run()
 		
-		for sample in trait_samples:
-			temp_working_dir_filter = tempfile.mkdtemp(dir=self.output_directory)
-			intermediate_filtered_fastq = temp_working_dir_filter+'/intermediate.fastq'
-			read_names_file = temp_working_dir_filter+'/read_names_file'
-		
-			kmc_filter_command = 'kmc_tools -t'+str(self.threads)+' filter result @'+sample.file_of_fastq_files+' '+intermediate_filtered_fastq
-			print('DEBUG: '+ kmc_filter_command)
-			subprocess.call(kmc_filter_command,shell=True)
-		
-			read_names_cmd = 'awk \'NR%4==1\' '+intermediate_filtered_fastq+' | sed \'s!@!!\' > ' + read_names_file
-			print('DEBUG: '+ read_names_cmd)
-			subprocess.call(read_names_cmd, shell=True)
-			
-			sample.filtered_forward_file = temp_working_dir_filter+'/sample_1.fastq.gz'
-			sample.filtered_reverse_file = temp_working_dir_filter+'/sample_2.fastq.gz'
-		
-			filtered_fastq_command = 'fastaq filter --ids_file '+read_names_file+' --mate_in '+sample.reverse_file+' --mate_out '+sample.filtered_reverse_file+' '+sample.forward_file+ ' '+sample.filtered_forward_file
-			print('DEBUG: '+ filtered_fastq_command)
-			subprocess.call(filtered_fastq_command, shell=True)
-		
-			# delete intermediate fastq file
-			os.remove(intermediate_filtered_fastq)
-			os.remove(read_names_file)
+		# Delete all sample temp directories
+		self.logger.info("Deleting individual kmer databases for samples"))
+		for kmc_sample in kmc_samples:
+			kmc_sample.cleanup()
 		
 		for sample in trait_samples:
-			spades_output_directory = self.output_directory+'/spades_'+sample.basename
-			spades_command = 'spades-3.9.0.py --careful --only-assembler -k '+ str(self.kmer) +' -1 '+sample.filtered_forward_file+' -2 '+sample.filtered_reverse_file+' -o '+spades_output_directory
-			subprocess.call(spades_command, shell=True)
-			print('DEBUG: '+ spades_command)
+			kmc_filter = KmcFilter(sample, self.output_directory, self.threads)
+			kmc_filter.filter_fastq_file_against_kmers()
+		
+		for sample in trait_samples:
+			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec)
+			sample.cleanup()
 		
