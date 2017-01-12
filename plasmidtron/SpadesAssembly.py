@@ -16,5 +16,5 @@ class SpadesAssembly:
 		return ' '.join([self.spades_exec, '--careful', '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory])
 
 	def run(self):
-		self.logger.info("Assembling sample : %s" % (self.sample.basename))
+		self.logger.info("Assembling sample" )
 		subprocess.call(self.spades_command, shell=True)

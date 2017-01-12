@@ -11,7 +11,7 @@ class SpreadsheetParser:
 	
 	def extract_samples(self):
 		samples = []
-		self.logger.info("Reading input spreadsheet: %s" % self.filename)
+		self.logger.info("Reading input spreadsheet")
 		with open(self.filename) as csvfile:
 			spreadsheetreader = csv.reader(csvfile, delimiter = ',')
 			for row in spreadsheetreader:
@@ -22,7 +22,7 @@ class SpreadsheetParser:
 					if not os.path.exists(filename):
 						raise Exception('Input file in spreadsheet doesnt exit: '+ filename)
 						
-				self.logger.info("Found input files : %s\t%s" % (forward_file, reverse_file))
+				self.logger.info("Found input files")
 				samples.append( SampleData(forward_file,reverse_file) )
 		return samples
 		

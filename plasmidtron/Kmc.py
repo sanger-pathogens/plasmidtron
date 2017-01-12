@@ -21,7 +21,7 @@ class Kmc:
 		
 	def run(self):	
 		self.create_file_of_file_names(self.sample.file_of_fastq_files)
-		self.logger.info("KMC command: %s" % self.construct_kmc_command())
+		self.logger.info("Running KMC command" )
 		
 		subprocess.call(self.construct_kmc_command(),shell=True)
 	
