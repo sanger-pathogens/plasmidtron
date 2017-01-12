@@ -21,3 +21,4 @@ class TestSpreadsheetParser(unittest.TestCase):
 		self.assertEqual(len(samples),1)
 		self.assertEqual(samples[0].forward_file,'plasmidtron/tests/data/spreadsheetparser/sampleA_1.fastq.gz')
 		self.assertEqual(samples[0].reverse_file,'plasmidtron/tests/data/spreadsheetparser/sampleA_2.fastq.gz')
+		

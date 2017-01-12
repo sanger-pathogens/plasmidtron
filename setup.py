@@ -7,9 +7,13 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+version = 'x'
+if os.path.exists('VERSION'):
+  version = open('VERSION').read().strip()
+
 setup(
     name='plasmidtron',
-    version='0.0.1',
+    version=version,
     description='plasmidtron: a tool to assemble parts of a genome responsible for a trait',
 	long_description=read('README.md'),
     packages = find_packages(),
