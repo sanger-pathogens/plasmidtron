@@ -60,4 +60,3 @@ class PlasmidTron:
 			spades_assembly.remove_small_contigs()
 			print(spades_assembly.filtered_spades_assembly_file() + '\n')
 			sample.cleanup()
-		
