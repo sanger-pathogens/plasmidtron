@@ -56,5 +56,8 @@ class PlasmidTron:
 		
 		for sample in trait_samples:
 			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec)
+			spades_assembly.run()
+			spades_assembly.remove_small_contigs()
+			print(spades_assembly.filtered_spades_assembly_file() + '\n')
 			sample.cleanup()
 		

@@ -15,14 +15,14 @@ class KmcFilter:
 	def store_intermediate_files(self):
 		self.intermediate_filtered_fastq = os.path.join(self.temp_working_dir, 'intermediate.fastq')
 		self.read_names_file = os.path.join(self.temp_working_dir, 'read_names_file')
-		self.sample.filtered_forward_file = os.path.join(temp_working_dir_filter, 'sample_1.fastq.gz')
-		self.sample.filtered_reverse_file = os.path.join(temp_working_dir_filter, 'sample_2.fastq.gz')
+		self.sample.filtered_forward_file = os.path.join(self.temp_working_dir_filter, 'sample_1.fastq.gz')
+		self.sample.filtered_reverse_file = os.path.join(self.temp_working_dir_filter, 'sample_2.fastq.gz')
 	
 	def kmc_filter_command(self):
 		return ' '.join(['kmc_tools', '-t'+str(self.threads), 'filter', 'result', '@'+self.sample.file_of_fastq_files, self.intermediate_filtered_fastq])
 		
 	def filtered_fastaq_command(self):
-		return ' '.join(['fastaq', 'filter', '--ids_file', self.read_names_file, '--mate_in', self.sample.reverse_file, ' --mate_out', self.sample.filtered_reverse_file, sample.forward_file, sample.filtered_forward_file ])
+		return ' '.join(['fastaq', 'filter', '--ids_file', self.read_names_file, '--mate_in', self.sample.reverse_file, ' --mate_out', self.sample.filtered_reverse_file, self.sample.forward_file, self.sample.filtered_forward_file ])
 	
 	def filter_fastq_file_against_kmers(self):
 		self.logger.info("Filter reads against kmer database for sample")
