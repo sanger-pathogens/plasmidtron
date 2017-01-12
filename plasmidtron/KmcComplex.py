@@ -4,6 +4,7 @@ import os
 import tempfile
 import subprocess
 import logging
+import shutil
 from plasmidtron.SampleData import SampleData
 
 class KmcComplex:
@@ -49,22 +50,24 @@ class KmcComplex:
 		for sample in self.nontrait_samples:
 			nontrait_basenames.append(sample.basename.replace('#','_'))
 	
-		set_operation_str  = 'result ='
+		set_operation_str  = 'result = '
 		set_operation_str += '('+  '+'.join(trait_basenames) +')'
-		set_operation_str += '-')
+		set_operation_str += '-'
 		set_operation_str += '('+  '+'.join(nontrait_basenames) +')'
 		return set_operation_str
 	
 	def kmc_complex_command(self):
-		return " ".join['kmc_tools', 
+		return " ".join(['kmc_tools', 
 			'-t' +  str(self.threads), 
 			'-ci' + str(self.min_kmers_threshold),
 			'complex',
-			self.complex_config_filename
-		]
+			self.complex_config_filename ])
 	
 	def run(self):
 		self.create_config_file()
 		self.logger.info("KMC complex command: %s" % self.kmc_complex_command())
 		subprocess.call(self.kmc_complex_command(), shell=True)
+		
+	def cleanup(self):
+		shutil.rmtree(self.temp_working_dir)
 		
