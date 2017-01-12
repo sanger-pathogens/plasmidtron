@@ -3,9 +3,10 @@ import sys
 import os
 import tempfile
 import subprocess
-from  plasmidtron.SampleData import SampleData
-from  plasmidtron.SpreadsheetParser import SpreadsheetParser
-from  plasmidtron.Kmc import Kmc
+from plasmidtron.SampleData import SampleData
+from plasmidtron.SpreadsheetParser import SpreadsheetParser
+from plasmidtron.Kmc import Kmc
+from plasmidtron.KmcComplex import KmcComplex
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -26,46 +27,13 @@ class PlasmidTron:
 		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs)
 		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs)
 		
-		# Run kmc to generate kmers for each set of FASTQs
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
 				kmc_sample.run()
-		
-		# using Complex, create a file describing merging all the traits into one set, non traits into another set, then subtract.
-		
-		# create complex input file
-		temp_working_dir = tempfile.mkdtemp(dir=self.output_directory)
-		complex_config_filename = temp_working_dir+'/complex_config_file'
-		with open(complex_config_filename, 'w') as complex_config_file:
-			complex_config_file.write("INPUT:\n")
-		
-			# write out each database name
-			for set_of_samples in [trait_samples, nontrait_samples]:
-				for sample in set_of_samples:
-					complex_config_file.write(sample.basename.replace('#','_')+' = '+sample.database_name+"\n")
-		
-			complex_config_file.write("OUTPUT:\n")
-			complex_config_file.write("result =")
-			trait_basenames = []
-			for sample in trait_samples:
-				trait_basenames.append(sample.basename.replace('#','_'))
-			nontrait_basenames = []
-			for sample in nontrait_samples:
-				nontrait_basenames.append(sample.basename.replace('#','_'))
-		
-			complex_config_file.write('('+  '+'.join(trait_basenames) +')')
-			complex_config_file.write('-')
-			complex_config_file.write('('+  '+'.join(nontrait_basenames) +')')
-			complex_config_file.write("\n")
-			# set operation
-			# 
-		
-		# increase the threshold for kmer counts
-		kmc_complex_command = "kmc_tools -t"+str(self.threads)+" complex " + complex_config_filename
-		print('DEBUG: '+ kmc_complex_command)
-		subprocess.call(kmc_complex_command,shell=True)
-		
+				
+		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
+		kmc_complex.run()
 		
 		# For traits only
 		# Filter each FASTQ file against kmer database of the differences between traits and non-traits

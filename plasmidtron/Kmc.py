@@ -1,6 +1,5 @@
 '''Run KMC over a single sample (2 FASTQs) to get kmers database'''
 
-import sys
 import os
 import tempfile
 import subprocess
@@ -31,10 +30,10 @@ class Kmc:
 			file_of_sample_fastqs.write(self.sample.reverse_file + "\n")
 			
 	def populate_database_name(self):
-		self.sample.database_name =  self.temp_working_dir+"/kmc_"+self.sample.basename
+		self.sample.database_name =  os.path.join(self.temp_working_dir,'kmc_' + self.sample.basename)
 		
 	def populate_fofn_name(self):
-		self.sample.file_of_fastq_files = self.temp_working_dir+"/fofn"
+		self.sample.file_of_fastq_files = os.path.join(self.temp_working_dir, 'fofn')
 	
 	def construct_kmc_command(self):
 		return " ".join['kmc', 
