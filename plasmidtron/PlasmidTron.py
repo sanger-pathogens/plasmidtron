@@ -24,16 +24,16 @@ class PlasmidTron:
 		self.min_kmers_threshold     = options.min_kmers_threshold
 		self.spades_exec             = options.spades_exec
 
-	def run():
+	def run(self):
 		if not os.path.exists(self.output_directory):
 		    os.makedirs(self.output_directory)
 		else:
 			sys.exit("The output directory already exists")
 		
-		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs)
-		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs)
+		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs).extract_samples()
+		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs).extract_samples()
 		
-		self.logger.info("Generating a kmer database for each sample"))
+		self.logger.info("Generating a kmer database for each sample")
 		kmc_samples =[]
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
@@ -41,12 +41,12 @@ class PlasmidTron:
 				kmc_sample.run()
 				kmc_samples.append(kmc_sample)
 		
-		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set"))
+		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set")
 		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
 		kmc_complex.run()
 		
 		# Delete all sample temp directories
-		self.logger.info("Deleting individual kmer databases for samples"))
+		self.logger.info("Deleting individual kmer databases for samples")
 		for kmc_sample in kmc_samples:
 			kmc_sample.cleanup()
 		
