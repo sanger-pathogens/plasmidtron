@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import argparse
 import sys
 import os
@@ -6,6 +5,7 @@ import tempfile
 import subprocess
 from  plasmidtron.SampleData import SampleData
 from  plasmidtron.SpreadsheetParser import SpreadsheetParser
+from  plasmidtron.Kmc import Kmc
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -29,24 +29,8 @@ class PlasmidTron:
 		# Run kmc to generate kmers for each set of FASTQs
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
-				temp_working_dir = tempfile.mkdtemp(dir=self.output_directory)
-				# TODO make sure to strip off path
-				basename = sample.forward_file.replace('_1.fastq.gz','')
-				sample.basename = basename
-		
-				with open(temp_working_dir+'/fofn', 'w') as file_of_sample_fastqs:
-					file_of_sample_fastqs.write(sample.forward_file + "\n")
-					file_of_sample_fastqs.write(sample.reverse_file + "\n")
-		
-				database_name =  temp_working_dir+"/kmc_"+basename
-				file_of_fastq_files = temp_working_dir+"/fofn"
-		
-				sample.database_name = database_name
-				sample.file_of_fastq_files =file_of_fastq_files
-		
-				kmc_command = "kmc -t"+str(self.threads)+" -ci"+str(self.min_kmers_threshold)+" -k"+ str(self.kmer) +" @"+file_of_fastq_files+" "+ temp_working_dir+"/kmc_"+basename +" "+ temp_working_dir
-				print('DEBUG: '+ kmc_command)
-				subprocess.call(kmc_command,shell=True)
+				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
+				kmc_sample.run()
 		
 		# using Complex, create a file describing merging all the traits into one set, non traits into another set, then subtract.
 		
