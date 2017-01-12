@@ -2,19 +2,10 @@
 import argparse
 import sys
 import os
-import csv
 import tempfile
 import subprocess
+import plasmidtron
 
-class SampleData:
-	def __init__(self,forward_file, reverse_file):
-		self.forward_file = forward_file
-		self.reverse_file = reverse_file
-		self.database_name = ''
-		self.file_of_fastq_files = ''
-		self.basename=''
-		self.filtered_forward_file=''
-		self.filtered_reverse_file=''
 
 # input data
 parser = argparse.ArgumentParser(
@@ -34,29 +25,8 @@ if not os.path.exists(options.output_directory):
 else:
 	sys.exit("The output directory already exists")
 
-trait_samples = []
-nontrait_samples = []
-# read in the metadata about the fastq files
-with open(options.file_of_trait_fastqs) as csvfile:
-	spreadsheetreader = csv.reader(csvfile, delimiter = ',')
-	for row in spreadsheetreader:
-		forward_file = row[0]
-		reverse_file = row[1]
-
-		if not os.path.exists(forward_file) or not os.path.exists(reverse_file):
-			 sys.exit( "The input files do not exist: "+forward_file+ " "+reverse_file)
-		trait_samples.append( SampleData(forward_file,reverse_file) )
-
-# read in the metadata about the fastq files
-with open(options.file_of_nontrait_fastqs) as csvfile:
-	spreadsheetreader = csv.reader(csvfile, delimiter = ',')
-	for row in spreadsheetreader:
-		forward_file = row[0]
-		reverse_file = row[1]
-
-		if not os.path.exists(forward_file) or not os.path.exists(reverse_file):
-			 sys.exit( "The input files dont exist: ")
-		nontrait_samples.append( SampleData(forward_file,reverse_file) )
+trait_samples = SpreadsheetParser(options.file_of_trait_fastqs)
+nontrait_samples = SpreadsheetParser(options.file_of_nontrait_fastqs)
 
 # Run kmc to generate kmers for each set of FASTQs
 for set_of_samples in [trait_samples, nontrait_samples]:
@@ -102,14 +72,14 @@ with open(complex_config_filename, 'w') as complex_config_file:
 	for sample in nontrait_samples:
 		nontrait_basenames.append(sample.basename.replace('#','_'))
 
-	complex_config_file.write('('+  '*'.join(trait_basenames) +')')
+	complex_config_file.write('('+  '+'.join(trait_basenames) +')')
 	complex_config_file.write('-')
 	complex_config_file.write('('+  '+'.join(nontrait_basenames) +')')
 	complex_config_file.write("\n")
 	# set operation
-	# shoudl there be an intersection between the trait set???
 	# 
 
+# increase the threshold for kmer counts
 kmc_complex_command = "kmc_tools -t"+str(options.threads)+" complex " + complex_config_filename
 print('DEBUG: '+ kmc_complex_command)
 subprocess.call(kmc_complex_command,shell=True)
@@ -133,11 +103,8 @@ for sample in trait_samples:
 	print('DEBUG: '+ read_names_cmd)
 	subprocess.call(read_names_cmd, shell=True)
 	
-	filtered_forward_file = temp_working_dir_filter+'/sample_1.fastq.gz'
-	sample.filtered_forward_file = filtered_forward_file
-
-	filtered_reverse_file = temp_working_dir_filter+'/sample_2.fastq.gz'
-	sample.filtered_reverse_file = filtered_reverse_file
+	sample.filtered_forward_file = temp_working_dir_filter+'/sample_1.fastq.gz'
+	sample.filtered_reverse_file = temp_working_dir_filter+'/sample_2.fastq.gz'
 
 	filtered_fastq_command = 'fastaq filter --ids_file '+read_names_file+' --mate_in '+sample.reverse_file+' --mate_out '+sample.filtered_reverse_file+' '+sample.forward_file+ ' '+sample.filtered_forward_file
 	print('DEBUG: '+ filtered_fastq_command)
