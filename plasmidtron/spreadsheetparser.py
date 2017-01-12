@@ -1,13 +1,13 @@
 import sys
 import os
 import csv
-import plasmidtron
+from plasmidtron.SampleData import SampleData
 
 class SpreadsheetParser:
 	def __init__(self,filename):
 		self.filename = filename
 	
-	def extract_samples():
+	def extract_samples(self):
 		samples = []
 		with open(self.filename) as csvfile:
 			spreadsheetreader = csv.reader(csvfile, delimiter = ',')
@@ -15,11 +15,10 @@ class SpreadsheetParser:
 				forward_file = row[0]
 				reverse_file = row[1]
 
-				if not os.path.exists(forward_file) or not os.path.exists(reverse_file):
-					 sys.exit( "The input files do not exist: "+forward_file+ " "+reverse_file)
+				for filename in [forward_file, reverse_file]:
+					if not os.path.exists(filename):
+						raise Exception('Input file in spreadsheet doesnt exit: '+ filename)
+						  
 				samples.append( SampleData(forward_file,reverse_file) )
 		return samples
-		
-	def is_valid_file():
-		return true
 		

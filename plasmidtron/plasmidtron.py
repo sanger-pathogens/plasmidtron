@@ -4,7 +4,8 @@ import sys
 import os
 import tempfile
 import subprocess
-import plasmidtron
+from  plasmidtron.SampleData import SampleData
+from  plasmidtron.SpreadsheetParser import SpreadsheetParser
 
 class PlasmidTron:
 	def __init__(self,options):

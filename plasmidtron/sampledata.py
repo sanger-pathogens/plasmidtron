@@ -1,5 +1,3 @@
-import plasmidtron
-
 class SampleData:
 	def __init__(self,forward_file, reverse_file):
 		self.forward_file = forward_file
