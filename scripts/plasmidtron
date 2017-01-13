@@ -7,11 +7,9 @@ sys.path.append('../')
 sys.path.append('./')
 from  plasmidtron.PlasmidTron import PlasmidTron
 
-
-# input data
 parser = argparse.ArgumentParser(
 	description = 'A tool to assemble parts of a genome responsible for a trait',
-	usage = 'ksieve [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
+	usage = 'plasmidtron [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
 parser.add_argument('output_directory', help='Output directory')
 parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait (case) FASTQs')
 parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait (control) FASTQs')
