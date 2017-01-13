@@ -5,4 +5,4 @@ sudo: false
 install:
   - "source ./install_dependencies.sh"
 script:
-  - "./run_tests.sh"
+  - "./run_tests.sh" 
