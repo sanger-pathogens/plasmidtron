@@ -26,4 +26,5 @@ IL9_4021:8:1:9:1658#7/2
 IL9_4021:8:1:9:1626#7/1
 IL9_4021:8:1:9:1626#7/2
 """)
+		os.remove(os.path.join(data_dir, 'output_file'))
 		

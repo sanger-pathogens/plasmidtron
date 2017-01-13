@@ -32,6 +32,8 @@ class KmcComplex:
 			complex_config_file.write(self.sample_definitions_str())
 			complex_config_file.write('OUTPUT:\n')
 			complex_config_file.write( self.samples_to_set_operation_str() + '\n')
+			complex_config_file.write('OUTPUT_PARAMS:\n')
+			complex_config_file.write( self.output_parameters_str() + '\n')
 
 	def sample_definitions_str(self):
 		sample_definition_lines = ''
@@ -40,6 +42,12 @@ class KmcComplex:
 			for sample in set_of_samples:
 				sample_definition_lines += self.sample_definition_line(sample) + "\n"
 		return sample_definition_lines
+		
+	def result_database(self):
+		return os.path.join(self.temp_working_dir, 'result')
+
+	def output_parameters_str(self):
+		return ' '.join(['-ci'+str(self.min_kmers_threshold)])
 
 	def samples_to_set_operation_str(self):
 		trait_basenames = []
@@ -65,7 +73,12 @@ class KmcComplex:
 	def run(self):
 		self.create_config_file()
 		self.logger.info("Running KMC complex command")
+		# kmc_tools doesnt allow for paths in the output database name (even though they say they do) so change working directory
+		# to prevent temp files polluting CWD
+		original_cwd = os.getcwd()
+		os.chdir(self.temp_working_dir)
 		subprocess.call(self.kmc_complex_command(), shell=True)
+		os.chdir(original_cwd)
 		
 	def cleanup(self):
 		shutil.rmtree(self.temp_working_dir)

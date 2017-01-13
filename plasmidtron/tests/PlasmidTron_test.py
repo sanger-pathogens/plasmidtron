@@ -1,5 +1,6 @@
 import unittest
 import os
+import shutil
 from plasmidtron.PlasmidTron import PlasmidTron
 
 class Options:
@@ -21,8 +22,18 @@ class TestPlasmidTron(unittest.TestCase):
 	
 	def test_small_valid_chrom_plasmid(self):
 		'''Given small FASTQS of simulated reads, with a chromosome in 1 and chromosome+plasmid in the other run the whole pipeline'''
-		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),False, 1, 81, 20, 'spades-3.9.0.py', 100)
+		if os.path.exists(os.path.join(data_dir,'out')):
+			shutil.rmtree(os.path.join(data_dir,'out'))
+		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades-3.9.0.py', 100)
 		
 		plasmid_tron = PlasmidTron(options)
 		plasmid_tron.run()
-	
+		
+		final_assembly = os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/filtered_contigs.fasta')
+		
+		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/contigs.fasta')))
+		self.assertTrue(os.path.isfile(final_assembly))
+		'''The final assembly should be about 6k so leave some margin for variation in SPAdes'''
+		self.assertTrue(os.path.getsize(final_assembly) > 5000)
+		shutil.rmtree(os.path.join(data_dir,'out'))
+		
