@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.6"
+sudo: false
+install:
+  - "source ./install_dependencies.sh"
+script:
+  - "./run_tests.sh"
