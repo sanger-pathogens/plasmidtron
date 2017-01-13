@@ -38,7 +38,7 @@ class KmcFilter:
 		
 		self.cleanup()
 		
-	def cleanup():
+	def cleanup(self):
 		os.remove(self.intermediate_filtered_fastq)
 		os.remove(self.read_names_file)
 		
