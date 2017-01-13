@@ -54,4 +54,5 @@ update_path () {
 update_path ${build_dir}
 update_path "${spades_dir}/bin"
 
+pip install pyfastaq biopython
 
