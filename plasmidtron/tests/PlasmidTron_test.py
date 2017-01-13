@@ -24,7 +24,7 @@ class TestPlasmidTron(unittest.TestCase):
 		'''Given small FASTQS of simulated reads, with a chromosome in 1 and chromosome+plasmid in the other run the whole pipeline'''
 		if os.path.exists(os.path.join(data_dir,'out')):
 			shutil.rmtree(os.path.join(data_dir,'out'))
-		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades-3.9.0.py', 100)
+		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades.py', 100)
 		
 		plasmid_tron = PlasmidTron(options)
 		plasmid_tron.run()
