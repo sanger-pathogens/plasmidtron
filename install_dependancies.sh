@@ -34,6 +34,8 @@ download () {
 cd $build_dir
 download "${KMC_DOWNLOAD_URL}kmc" "kmc"
 download "${KMC_DOWNLOAD_URL}kmc_tools" "kmc_tools"
+chmod +x kmc
+chmod +x kmc_tools
 
 # --------------- SPAdes ------------------
 cd $build_dir
