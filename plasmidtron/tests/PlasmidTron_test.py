@@ -14,9 +14,10 @@ class Options:
 		self.min_kmers_threshold     = min_kmers_threshold
 		self.spades_exec             = spades_exec
 		self.min_contig_len          = min_contig_len
+		self.action                  = action
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
-data_dir = os.path.join(test_modules_dir, 'data','plasmidtron')
+data_dir = os.path.join(test_modules_dir, 'data','plasmidtron','union')
 
 class TestPlasmidTron(unittest.TestCase):
 	
