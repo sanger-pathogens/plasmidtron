@@ -14,7 +14,7 @@ class Options:
 		self.min_kmers_threshold     = min_kmers_threshold
 		self.spades_exec             = spades_exec
 		self.min_contig_len          = min_contig_len
-		self.max_kmers_threshold     = options.max_kmers_threshold
+		self.max_kmers_threshold     = max_kmers_threshold
 		self.action                  = action
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
