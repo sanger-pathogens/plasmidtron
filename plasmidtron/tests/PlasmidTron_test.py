@@ -4,7 +4,7 @@ import shutil
 from plasmidtron.PlasmidTron import PlasmidTron
 
 class Options:
-	def __init__(self,output_directory, file_of_trait_fastqs, file_of_nontrait_fastqs, verbose, threads, kmer, min_kmers_threshold, spades_exec, min_contig_len):
+	def __init__(self,output_directory, file_of_trait_fastqs, file_of_nontrait_fastqs, verbose, threads, kmer, min_kmers_threshold, spades_exec, min_contig_len, action):
 		self.output_directory        = output_directory 
 		self.file_of_trait_fastqs    = file_of_trait_fastqs
 		self.file_of_nontrait_fastqs = file_of_nontrait_fastqs
