@@ -15,12 +15,6 @@ try:
 except pkg_resources.DistributionNotFound:
 	version = 'x.y.z'
 
-def is_output_directory_valid(filename):
-	if os.path.exists(filename):
-		raise argparse.ArgumentTypeError("The output directory already exists")
-	return filename
-
-
 parser = argparse.ArgumentParser(
 	description = 'A tool to assemble parts of a genome responsible for a trait',
 	usage = 'plasmidtron [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
