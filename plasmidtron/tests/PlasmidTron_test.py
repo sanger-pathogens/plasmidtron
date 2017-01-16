@@ -17,7 +17,7 @@ class Options:
 		self.action                  = action
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
-data_dir = os.path.join(test_modules_dir, 'data','plasmidtron','union')
+data_dir = os.path.join(test_modules_dir, 'data','plasmidtron')
 
 class TestPlasmidTron(unittest.TestCase):
 	
@@ -25,7 +25,7 @@ class TestPlasmidTron(unittest.TestCase):
 		'''Given small FASTQS of simulated reads, with a chromosome in 1 and chromosome+plasmid in the other run the whole pipeline'''
 		if os.path.exists(os.path.join(data_dir,'out')):
 			shutil.rmtree(os.path.join(data_dir,'out'))
-		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades.py', 100)
+		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades.py', 100,'union')
 		
 		plasmid_tron = PlasmidTron(options)
 		plasmid_tron.run()
