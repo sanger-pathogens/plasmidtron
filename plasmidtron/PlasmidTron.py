@@ -27,11 +27,7 @@ class PlasmidTron:
 		self.action                  = options.action
 
 	def run(self):
-		if not os.path.exists(self.output_directory):
-		    os.makedirs(self.output_directory)
-		else:
-			sys.exit("The output directory already exists")
-		
+		os.makedirs(self.output_directory)
 		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs).extract_samples()
 		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs).extract_samples()
 		
