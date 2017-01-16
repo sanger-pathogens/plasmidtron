@@ -22,15 +22,13 @@ class PlasmidTron:
 		self.threads                 = options.threads
 		self.kmer                    = options.kmer
 		self.min_kmers_threshold     = options.min_kmers_threshold
+		self.max_kmers_threshold     = options.max_kmers_threshold
 		self.spades_exec             = options.spades_exec
 		self.min_contig_len          = options.min_contig_len
+		self.action                  = options.action
 
 	def run(self):
-		if not os.path.exists(self.output_directory):
-		    os.makedirs(self.output_directory)
-		else:
-			sys.exit("The output directory already exists")
-		
+		os.makedirs(self.output_directory)
 		trait_samples = SpreadsheetParser(self.file_of_trait_fastqs).extract_samples()
 		nontrait_samples = SpreadsheetParser(self.file_of_nontrait_fastqs).extract_samples()
 		
@@ -38,12 +36,12 @@ class PlasmidTron:
 		kmc_samples =[]
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
-				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
+				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold)
 				kmc_sample.run()
 				kmc_samples.append(kmc_sample)
 		
 		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set")
-		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
+		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples, self.action)
 		kmc_complex.run()
 
 		kmc_filters = []

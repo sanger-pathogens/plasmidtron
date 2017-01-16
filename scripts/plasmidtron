@@ -2,24 +2,34 @@
 
 import argparse
 import sys
+import os
 import pkg_resources
 sys.path.append('../')
 sys.path.append('./')
 from  plasmidtron.PlasmidTron import PlasmidTron
+from  plasmidtron.InputTypes import InputTypes
+
+version = ''
+try:
+	version = pkg_resources.get_distribution("plasmidtron").version
+except pkg_resources.DistributionNotFound:
+	version = 'x.y.z'
 
 parser = argparse.ArgumentParser(
 	description = 'A tool to assemble parts of a genome responsible for a trait',
 	usage = 'plasmidtron [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
-parser.add_argument('output_directory', help='Output directory')
-parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait (case) FASTQs')
-parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait (control) FASTQs')
-parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging', default = 0)
-parser.add_argument('--threads',  '-t', help='Number of threads', type=int,  default = 1)
-parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length', type=int,  default = 81)
-parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this', type=int,  default = 25)
-parser.add_argument('--spades_exec',	 '-s', help='Set the SPAdes executable', type=str,  default = 'spades.py')
-parser.add_argument('--min_contig_len',	 '-l', help='Minimum contig length in final assembly', type=int,  default = 600)
-parser.add_argument('--version', action='version', version=str(pkg_resources.get_distribution("plasmidtron").version))
+parser.add_argument('output_directory', help='Output directory', type=InputTypes.is_output_directory_valid )
+parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait (case) FASTQs', type=InputTypes.is_file_of_trait_fastqs_valid)
+parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait (control) FASTQs', type=InputTypes.is_file_of_nontrait_fastqs_valid)
+parser.add_argument('--action',	 '-a', help='Control how the traits kmers are filtered for assembly [%(default)s]', choices=['intersection','union'],  default = 'union')
+parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid,  default = 81)
+parser.add_argument('--min_contig_len',	 '-l', help='Minimum contig length in final assembly [%(default)s]', type=InputTypes.is_min_contig_len_valid, default = 600)
+parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this [%(default)s]', type=InputTypes.is_min_kmers_threshold_valid,  default = 25)
+parser.add_argument('--max_kmers_threshold',	 '-x', help='Exclude k-mers occurring more than this [%(default)s]', type=InputTypes.is_max_kmers_threshold_valid,  default = 254)
+parser.add_argument('--threads',  '-t', help='Number of threads [%(default)s]', type=InputTypes.is_threads_valid,  default = 1)
+parser.add_argument('--spades_exec',	 '-s', help='Set the SPAdes executable [%(default)s]', type=str,  default = 'spades.py')
+parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging [%(default)s]', default = 0)
+parser.add_argument('--version', action='version', version=str(version))
 
 options = parser.parse_args()
 

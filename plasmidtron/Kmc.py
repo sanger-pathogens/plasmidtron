@@ -8,14 +8,15 @@ import shutil
 from plasmidtron.SampleData import SampleData
 
 class Kmc:
-	def __init__(self,output_directory, sample, threads, kmer, min_kmers_threshold):
+	def __init__(self,output_directory, sample, threads, kmer, min_kmers_threshold, max_kmers_threshold):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.sample = sample
 		self.threads = threads
 		self.kmer = kmer
 		self.min_kmers_threshold = min_kmers_threshold
-		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
+		self.max_kmers_threshold = max_kmers_threshold
+		self.temp_working_dir = tempfile.mkdtemp(dir=os.path.abspath(output_directory))
 		self.populate_database_name()
 		self.populate_fofn_name()
 		
@@ -40,6 +41,7 @@ class Kmc:
 		return " ".join(['kmc', 
 			'-t' +  str(self.threads), 
 			'-ci' + str(self.min_kmers_threshold),
+			'-cx' + str(self.max_kmers_threshold),
 			'-k' + str(self.kmer),
 			'@' + self.sample.file_of_fastq_files,
 			self.sample.database_name,
