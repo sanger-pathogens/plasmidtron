@@ -22,6 +22,7 @@ class PlasmidTron:
 		self.threads                 = options.threads
 		self.kmer                    = options.kmer
 		self.min_kmers_threshold     = options.min_kmers_threshold
+		self.max_kmers_threshold     = options.max_kmers_threshold
 		self.spades_exec             = options.spades_exec
 		self.min_contig_len          = options.min_contig_len
 		self.action                  = options.action
@@ -35,7 +36,7 @@ class PlasmidTron:
 		kmc_samples =[]
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
-				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold)
+				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold)
 				kmc_sample.run()
 				kmc_samples.append(kmc_sample)
 		

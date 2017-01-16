@@ -25,6 +25,7 @@ parser.add_argument('--action',	 '-a', help='Control how the traits kmers are fi
 parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid,  default = 81)
 parser.add_argument('--min_contig_len',	 '-l', help='Minimum contig length in final assembly [%(default)s]', type=InputTypes.is_min_contig_len_valid, default = 600)
 parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this [%(default)s]', type=InputTypes.is_min_kmers_threshold_valid,  default = 25)
+parser.add_argument('--max_kmers_threshold',	 '-m', help='Exclude k-mers occurring more than this [%(default)s]', type=InputTypes.is_max_kmers_threshold_valid,  default = 254)
 parser.add_argument('--threads',  '-t', help='Number of threads [%(default)s]', type=InputTypes.is_threads_valid,  default = 1)
 parser.add_argument('--spades_exec',	 '-s', help='Set the SPAdes executable [%(default)s]', type=str,  default = 'spades.py')
 parser.add_argument('--verbose',  '-v', action='count', help='Turn on debugging [%(default)s]', default = 0)

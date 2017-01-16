@@ -4,7 +4,7 @@ import shutil
 from plasmidtron.PlasmidTron import PlasmidTron
 
 class Options:
-	def __init__(self,output_directory, file_of_trait_fastqs, file_of_nontrait_fastqs, verbose, threads, kmer, min_kmers_threshold, spades_exec, min_contig_len, action):
+	def __init__(self,output_directory, file_of_trait_fastqs, file_of_nontrait_fastqs, verbose, threads, kmer, min_kmers_threshold,max_kmers_threshold, spades_exec, min_contig_len, action):
 		self.output_directory        = output_directory 
 		self.file_of_trait_fastqs    = file_of_trait_fastqs
 		self.file_of_nontrait_fastqs = file_of_nontrait_fastqs
@@ -14,6 +14,7 @@ class Options:
 		self.min_kmers_threshold     = min_kmers_threshold
 		self.spades_exec             = spades_exec
 		self.min_contig_len          = min_contig_len
+		self.max_kmers_threshold     = options.max_kmers_threshold
 		self.action                  = action
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
@@ -25,7 +26,7 @@ class TestPlasmidTron(unittest.TestCase):
 		'''Given small FASTQS of simulated reads, with a chromosome in 1 and chromosome+plasmid in the other run the whole pipeline'''
 		if os.path.exists(os.path.join(data_dir,'out')):
 			shutil.rmtree(os.path.join(data_dir,'out'))
-		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20, 'spades.py', 100,'union')
+		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'nontraits.csv'),True, 1, 81, 20,200, 'spades.py', 100,'union')
 		
 		plasmid_tron = PlasmidTron(options)
 		plasmid_tron.run()
