@@ -8,13 +8,14 @@ import shutil
 from plasmidtron.SampleData import SampleData
 
 class KmcComplex:
-	def __init__(self,output_directory, threads, min_kmers_threshold, trait_samples, nontrait_samples):
+	def __init__(self,output_directory, threads, min_kmers_threshold, trait_samples, nontrait_samples, action):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.threads = threads
 		self.min_kmers_threshold = min_kmers_threshold
 		self.trait_samples = trait_samples
 		self.nontrait_samples = nontrait_samples
+		self.action = action
 		
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 		self.complex_config_filename = self.generate_complex_config_filename()
@@ -58,8 +59,12 @@ class KmcComplex:
 		for sample in self.nontrait_samples:
 			nontrait_basenames.append(sample.basename.replace('#','_'))
 	
+		trait_set_operation = '+'
+		if self.action == 'intersection':
+			trait_set_operation = '*'
+	
 		set_operation_str  = 'result = '
-		set_operation_str += '('+  '+'.join(trait_basenames) +')'
+		set_operation_str += '('+  trait_set_operation.join(trait_basenames) +')'
 		set_operation_str += '-'
 		set_operation_str += '('+  '+'.join(nontrait_basenames) +')'
 		return set_operation_str

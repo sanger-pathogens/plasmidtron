@@ -1,3 +1,7 @@
+v0.0.2 - 16/01/17
+------
+Allow for the trait kmers to be filtered differently. By default all kmers in the trait set only get used for filtering reads for assembly (union). This can be changed to strict so only kmers occuring in all trait samples are used (intersection).
+
 v0.0.1 - 12/01/17
 ------
 Initial version

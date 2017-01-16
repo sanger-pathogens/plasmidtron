@@ -24,6 +24,7 @@ class PlasmidTron:
 		self.min_kmers_threshold     = options.min_kmers_threshold
 		self.spades_exec             = options.spades_exec
 		self.min_contig_len          = options.min_contig_len
+		self.action                  = options.action
 
 	def run(self):
 		if not os.path.exists(self.output_directory):
@@ -43,7 +44,7 @@ class PlasmidTron:
 				kmc_samples.append(kmc_sample)
 		
 		self.logger.info("Generating a database of kmers which are in the traits but not in the nontraits set")
-		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples)
+		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples, self.action)
 		kmc_complex.run()
 
 		kmc_filters = []
