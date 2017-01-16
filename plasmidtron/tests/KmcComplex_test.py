@@ -77,7 +77,7 @@ OUTPUT_PARAMS:
 	def test_kmc_complex_command(self):
 		k = KmcComplex(os.getcwd(), 1, 1, [], [], 'union')
 		k.complex_config_filename = '/path/to/config'
-		self.assertEqual(k.kmc_complex_command(), 'kmc_tools -t1 complex /path/to/config')
+		self.assertEqual(k.kmc_complex_command(), 'kmc_tools -t1 complex complex_config_file')
 		k.cleanup()
 	
 

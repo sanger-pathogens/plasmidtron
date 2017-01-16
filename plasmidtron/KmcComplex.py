@@ -35,6 +35,7 @@ class KmcComplex:
 			complex_config_file.write( self.samples_to_set_operation_str() + '\n')
 			complex_config_file.write('OUTPUT_PARAMS:\n')
 			complex_config_file.write( self.output_parameters_str() + '\n')
+		return
 
 	def sample_definitions_str(self):
 		sample_definition_lines = ''
@@ -73,7 +74,7 @@ class KmcComplex:
 		return " ".join(['kmc_tools', 
 			'-t' +  str(self.threads),
 			'complex',
-			self.complex_config_filename ])
+			'complex_config_file' ])
 	
 	def run(self):
 		self.create_config_file()
