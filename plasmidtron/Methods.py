@@ -78,7 +78,7 @@ class Methods:
 		
 	def references_paragraph(self):
 		references_text =  'Anton Bankevich, Sergey Nurk, et. al. , and Pavel A. Pevzner. SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing. Journal of Computational Biology 19(5) (2012), 455-477. doi:10.1089/cmb.2012.0021\n'
-		references_text += 'Andrew J. Page, Alexander Wailan,Yan Shao, Nicholas R. Thomson, Jacqueline A. Keane, "PlasmidTron: kmer based de novo assembly of genome sequences based on phenotypes", in preparation (2017).\n'
+		references_text += 'Andrew J. Page, Alexander Wailan,Yan Shao, Martin G. Hunt, Nicholas R. Thomson, Jacqueline A. Keane, "PlasmidTron: kmer based de novo assembly of genome sequences based on phenotypes", in preparation (2017).\n'
 		references_text += 'Deorowicz, S., Kokot, M., Grabowski, Sz., Debudaj-Grabysz, A., KMC 2: Fast and resource-frugal k-mer counting, Bioinformatics, 2015; doi: 10.1093/bioinformatics/btv022.\n'
 		return references_text
 		
