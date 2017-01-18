@@ -2,6 +2,7 @@ import os
 import logging
 import tempfile
 import subprocess
+import shutil
 from Bio import SeqIO
  
 '''Assemble a filtered sample with SPAdes'''
@@ -20,10 +21,10 @@ class SpadesAssembly:
 		return ' '.join([self.spades_exec, '--careful', '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory])
 
 	def spades_assembly_file(self):
-		return os.path.join(self.spades_output_directory,'contigs.fasta')
+		return os.path.join(self.spades_output_directory,'scaffolds.fasta')
 
 	def filtered_spades_assembly_file(self):
-		return os.path.join(self.spades_output_directory,'filtered_contigs.fasta')
+		return os.path.join(self.spades_output_directory,'filtered_scaffolds.fasta')
 		
 	def remove_small_contigs(self,input_file, output_file):
 		with open(input_file, "r") as spades_input_file, open(output_file, "w") as spades_output_file:
@@ -38,3 +39,10 @@ class SpadesAssembly:
 		self.logger.info("Assembling sample" )
 		subprocess.call(self.spades_command(), shell=True)
 		self.remove_small_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
+
+	def cleanup():
+		shutil.rmtree(os.path.join(self.spades_output_directory, 'tmp' ))
+		shutil.rmtree(os.path.join(self.spades_output_directory, 'mismatch_corrector' ))
+		shutil.rmtree(os.path.join(self.spades_output_directory, 'misc' ))
+		shutil.rmtree(os.path.join(self.spades_output_directory, 'K'+self.kmer ))
+		

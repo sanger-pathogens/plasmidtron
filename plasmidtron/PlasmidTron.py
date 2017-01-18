@@ -50,9 +50,11 @@ class PlasmidTron:
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 		
+		spades_assemblies = []
 		for sample in trait_samples:
 			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec, self.min_contig_len)
 			spades_assembly.run()
+			spades_assemblies.append(spades_assembly)
 			print(spades_assembly.filtered_spades_assembly_file() + '\n')
 			sample.cleanup()
 			
@@ -69,4 +71,7 @@ class PlasmidTron:
 			
 			for kmc_filter in kmc_filters:
 				kmc_filter.cleanup()
+			
+			for spades_assembly in spades_assemblies:
+				spades_assembly.cleanup()
 		
