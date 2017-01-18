@@ -31,9 +31,9 @@ class TestPlasmidTron(unittest.TestCase):
 		plasmid_tron = PlasmidTron(options)
 		plasmid_tron.run()
 		
-		final_assembly = os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/filtered_contigs.fasta')
+		final_assembly = os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/filtered_scaffolds.fasta')
 		
-		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/contigs.fasta')))
+		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/scaffolds.fasta')))
 		self.assertTrue(os.path.isfile(final_assembly))
 		'''The final assembly should be about 6k so leave some margin for variation in SPAdes'''
 		self.assertTrue(os.path.getsize(final_assembly) > 5000)
