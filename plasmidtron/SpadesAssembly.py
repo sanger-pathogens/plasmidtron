@@ -40,7 +40,7 @@ class SpadesAssembly:
 		subprocess.call(self.spades_command(), shell=True)
 		self.remove_small_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
 
-	def cleanup():
+	def cleanup(self):
 		shutil.rmtree(os.path.join(self.spades_output_directory, 'tmp' ))
 		shutil.rmtree(os.path.join(self.spades_output_directory, 'mismatch_corrector' ))
 		shutil.rmtree(os.path.join(self.spades_output_directory, 'misc' ))
