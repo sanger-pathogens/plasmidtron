@@ -54,7 +54,7 @@ class SpadesAssembly:
 		shutil.rmtree(os.path.join(self.spades_output_directory(), 'tmp' ))
 		shutil.rmtree(os.path.join(self.spades_output_directory(), 'mismatch_corrector' ))
 		shutil.rmtree(os.path.join(self.spades_output_directory(), 'misc' ))
-		shutil.rmtree(os.path.join(self.spades_output_directory(), 'K'+self.kmer ))
+		shutil.rmtree(os.path.join(self.spades_output_directory(), 'K'+str(self.kmer) ))
 		if self.use_temp_directory:
 			shutil.rmtree(self.temp_working_dir)
 		

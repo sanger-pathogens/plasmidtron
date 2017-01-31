@@ -20,7 +20,7 @@ optional arguments:
   --action {intersection,union}, -a {intersection,union}
                         Control how the traits kmers are filtered for assembly
                         [union]
-  --kmer KMER, -k KMER  Kmer to use, depends on read length [61]
+  --kmer KMER, -k KMER  Kmer to use, depends on read length [51]
   --min_contig_len MIN_CONTIG_LEN, -l MIN_CONTIG_LEN
                         Minimum contig length in final assembly [1000]
   --min_kmers_threshold MIN_KMERS_THRESHOLD, -m MIN_KMERS_THRESHOLD
