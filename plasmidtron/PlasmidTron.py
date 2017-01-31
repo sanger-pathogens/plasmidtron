@@ -10,6 +10,7 @@ from plasmidtron.FastqReadNames import FastqReadNames
 from plasmidtron.KmcFilter import KmcFilter
 from plasmidtron.SpadesAssembly import SpadesAssembly
 from plasmidtron.Methods import Methods
+from plasmidtron.KmcFasta import KmcFasta
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -52,11 +53,49 @@ class PlasmidTron:
 		
 		spades_assemblies = []
 		for sample in trait_samples:
-			spades_assembly = SpadesAssembly( sample, self.output_directory, self.threads, self.kmer, self.spades_exec, self.min_contig_len)
+			spades_assembly = SpadesAssembly(	sample, 
+												self.output_directory, 
+												self.threads, 
+												self.kmer, 
+												self.spades_exec, 
+												self.min_contig_len,
+												True)
+			spades_assembly.run()
+			self.logger.info("Rescaffold 1st assembly with all reads")
+			# Next we want to scaffold by using all of the original reads to join up the small contigs.
+			# Extract all of the kmers found in the filtered assembly
+			self.logger.info("Extract kmers from assembly")
+			kmc_fasta = KmcFasta(	self.output_directory, 
+									spades_assembly.filtered_spades_assembly_file(), 
+									self.threads, 
+									self.kmer,
+									self.min_kmers_threshold, 
+									self.max_kmers_threshold)
+			
+			# Pull out any reads matching the kmers found in the assembly
+			self.logger.info("Pull out reads from original fastq files matching assembly kmers")
+			kmc_filter = KmcFilter(	sample, 
+									self.output_directory, 
+									self.threads, 
+									kmc_complex.result_database())
+			kmc_filter.filter_fastq_file_against_kmers()
+			kmc_filters.append(kmc_filter)
+			
+			# delete the original assembly directory
+			if not self.verbose:
+				spades_assembly.cleanup()
+			
+			self.logger.info("Reassemble with SPAdes")
+			spades_assembly = SpadesAssembly(	sample, 
+												self.output_directory, 
+												self.threads, 
+												self.kmer, 
+												self.spades_exec, 
+												self.min_contig_len,
+												False)
 			spades_assembly.run()
 			spades_assemblies.append(spades_assembly)
-			print(spades_assembly.filtered_spades_assembly_file() + '\n')
-			sample.cleanup()
+			print(spades_assembly.filtered_spades_assembly_file()+"\n")
 			
 		method_file = Methods(os.path.join(self.output_directory, 'methods_summary.txt'), trait_samples, nontrait_samples, self.min_kmers_threshold, self.min_contig_len, self.start_time, self.spades_exec)
 		method_file.create_file()

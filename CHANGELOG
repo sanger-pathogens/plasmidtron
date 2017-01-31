@@ -1,3 +1,7 @@
+v0.1.0 - 31/01/17
+------
+Rescaffold at the end by extracting kmers from spades assembly, reextracting reads, and reassembling & filtering.
+
 v0.0.3 - 18/01/17
 ------
 Cleanup SPAdes output files to reduce the amount of disk space used.
