@@ -22,7 +22,9 @@ class SpadesAssembly:
 		if self.use_temp_directory:
 			return str(self.temp_working_dir)
 		else:
-			return os.path.join(self.output_directory, 'spades_'+sample.basename)
+			if not os.path.exists(self.output_directory):
+				os.makedirs(self.output_directory)
+			return os.path.join(self.output_directory, 'spades_'+self.sample.basename)
 
 	def spades_command(self):
 		return ' '.join([self.spades_exec, '--careful', '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory() ])
