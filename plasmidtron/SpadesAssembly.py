@@ -16,14 +16,15 @@ class SpadesAssembly:
 		self.minimum_length = minimum_length
 		self.spades_exec = spades_exec
 		self.use_temp_directory = use_temp_directory
+
+		if not os.path.exists(self.output_directory):
+			os.makedirs(self.output_directory)
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 	
 	def spades_output_directory(self):
 		if self.use_temp_directory:
 			return str(self.temp_working_dir)
 		else:
-			if not os.path.exists(self.output_directory):
-				os.makedirs(self.output_directory)
 			return os.path.join(self.output_directory, 'spades_'+self.sample.basename)
 
 	def spades_command(self):
