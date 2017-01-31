@@ -20,7 +20,7 @@ optional arguments:
   --action {intersection,union}, -a {intersection,union}
                         Control how the traits kmers are filtered for assembly
                         [union]
-  --kmer KMER, -k KMER  Kmer to use, depends on read length [81]
+  --kmer KMER, -k KMER  Kmer to use, depends on read length [61]
   --min_contig_len MIN_CONTIG_LEN, -l MIN_CONTIG_LEN
                         Minimum contig length in final assembly [1000]
   --min_kmers_threshold MIN_KMERS_THRESHOLD, -m MIN_KMERS_THRESHOLD
@@ -65,7 +65,7 @@ The largest consumer of RAM (memory) is SPAdes. Assembling a whole bacteria take
 By default all of the intermediate files are cleaned up at the end, so the overall disk space usage is quite low. As an example, an input of 800 Mbytes of compressed reads created 40 Mbytes of output data at the end. While the algorithm is running the disk usage will never exceed the size of the input reads. The intermediate files can be kept if you use the 'verbose' option. 
 
 #Outputs 
-For every trait sample you will get an assembly of nucleotide sequences in FASTA format. You will also get a text file describing the process, with versions of software, parameters used and references.
+For every trait sample you will get an assembly of nucleotide sequences in FASTA format. These are scaffolded by SPAdes and have small sequences filtered out. You will also get a text file describing the process, with versions of software, parameters used and references.
 
 #Installation
 There are a number of installation methods. Choosing the right one for the system you use will simpliy the process.
