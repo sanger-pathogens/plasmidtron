@@ -28,6 +28,10 @@ class PlasmidTron:
 		self.min_contig_len             = options.min_contig_len
 		self.action                     = options.action
 		self.min_spades_contig_coverage = options.min_spades_contig_coverage
+		
+		
+		if self.verbose:
+			self.logger.setLevel(10)
 
 	def run(self):
 		os.makedirs(self.output_directory)

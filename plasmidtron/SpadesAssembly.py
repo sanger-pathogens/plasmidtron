@@ -43,7 +43,7 @@ class SpadesAssembly:
 		#NODE_447_length_1644_cov_25.5669
 		m = re.search('cov_([\d]+)', contig_name)
 		if m and m.group(0):
-			return m.group(1)
+			return int(m.group(1))
 		else:
 			# return a number big enough that it will always keep the contig
 			return self.min_spades_contig_coverage + 1
