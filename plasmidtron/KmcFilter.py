@@ -2,6 +2,7 @@ import os
 import logging
 import tempfile
 import subprocess
+import shutil
 from plasmidtron.FastqReadNames import FastqReadNames
  
 '''Given a kmer database extract filter a FASTQ file for a sample'''
@@ -40,3 +41,4 @@ class KmcFilter:
 	def cleanup(self):
 		os.remove(self.intermediate_filtered_fastq)
 		os.remove(self.read_names_file)
+		shutil.rmtree(self.temp_working_dir)
