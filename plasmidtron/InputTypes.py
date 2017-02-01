@@ -53,3 +53,10 @@ class InputTypes:
 				return max_kmers_threshold
 		raise argparse.ArgumentTypeError("Invalid maximum kmers threshold, it must be between 10 and 255, and greater than the minimum kmer value, but ideally greater than the coverage.")
 			
+	def is_min_spades_contig_coverage_valid(value_str):
+		if value_str.isdigit():
+			min_coverage = int(value_str)
+			if  min_coverage >= 0 and min_coverage <= 1000000:
+				return min_coverage
+		raise argparse.ArgumentTypeError("Invalid minimum SPAdes contig coverage, try between 20 and 30.")
+

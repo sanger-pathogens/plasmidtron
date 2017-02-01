@@ -11,7 +11,7 @@ class TestSpadesAssembly(unittest.TestCase):
 	def test_filtering_small_contigs(self):
 		sample = SampleData('/path/to/sample_1.fastq.gz','/path/to/sample_2.fastq.gz' )
 		
-		s = SpadesAssembly(sample, 'abc', 1, 1, '', 20, False )
+		s = SpadesAssembly(sample, 'abc', 1, 1, '', 20, False, 0 )
 		s.remove_small_contigs(os.path.join(data_dir, 'assembly_with_small_contigs.fa'), os.path.join(data_dir, 'actual_assembly_without_small_contigs.fa'))
 		
 		with open(os.path.join(data_dir, 'actual_assembly_without_small_contigs.fa'), 'r') as actual_file, open(os.path.join(data_dir, 'expected_assembly_without_small_contigs.fa'), 'r') as expected_file:
@@ -20,4 +20,17 @@ class TestSpadesAssembly(unittest.TestCase):
 			
 			self.assertEqual(actual_config_content,expected_config_content)
 		os.remove(os.path.join(data_dir, 'actual_assembly_without_small_contigs.fa'))
+		
+	def test_filtering_low_coverage_contigs(self):
+		sample = SampleData('/path/to/sample_1.fastq.gz','/path/to/sample_2.fastq.gz' )
+		
+		s = SpadesAssembly(sample, 'abc', 1, 1, '', 1, False, 24 )
+		s.remove_small_contigs(os.path.join(data_dir, 'assembly_with_small_contigs.fa'), os.path.join(data_dir, 'actual_assembly_without_low_coverage_contigs.fa'))
+		
+		with open(os.path.join(data_dir, 'actual_assembly_without_low_coverage_contigs.fa'), 'r') as actual_file, open(os.path.join(data_dir, 'expected_assembly_coverage.fa'), 'r') as expected_file:
+			actual_config_content = actual_file.read()
+			expected_config_content = expected_file.read()
+			
+			self.assertEqual(actual_config_content,expected_config_content)
+		os.remove(os.path.join(data_dir, 'actual_assembly_without_low_coverage_contigs.fa'))
 		

@@ -16,17 +16,22 @@ class PlasmidTron:
 	def __init__(self,options):
 		self.start_time = int(time.time())
 		self.logger = logging.getLogger(__name__)
-		self.output_directory        = options.output_directory 
-		self.file_of_trait_fastqs    = options.file_of_trait_fastqs
-		self.file_of_nontrait_fastqs = options.file_of_nontrait_fastqs
-		self.verbose                 = options.verbose
-		self.threads                 = options.threads
-		self.kmer                    = options.kmer
-		self.min_kmers_threshold     = options.min_kmers_threshold
-		self.max_kmers_threshold     = options.max_kmers_threshold
-		self.spades_exec             = options.spades_exec
-		self.min_contig_len          = options.min_contig_len
-		self.action                  = options.action
+		self.output_directory           = options.output_directory 
+		self.file_of_trait_fastqs       = options.file_of_trait_fastqs
+		self.file_of_nontrait_fastqs    = options.file_of_nontrait_fastqs
+		self.verbose                    = options.verbose
+		self.threads                    = options.threads
+		self.kmer                       = options.kmer
+		self.min_kmers_threshold        = options.min_kmers_threshold
+		self.max_kmers_threshold        = options.max_kmers_threshold
+		self.spades_exec                = options.spades_exec
+		self.min_contig_len             = options.min_contig_len
+		self.action                     = options.action
+		self.min_spades_contig_coverage = options.min_spades_contig_coverage
+		
+		
+		if self.verbose:
+			self.logger.setLevel(10)
 
 	def run(self):
 		os.makedirs(self.output_directory)
@@ -51,6 +56,7 @@ class PlasmidTron:
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 		
+		kmc_fastas = []
 		spades_assemblies = []
 		for sample in trait_samples:
 			spades_assembly = SpadesAssembly(	sample, 
@@ -59,7 +65,8 @@ class PlasmidTron:
 												self.kmer, 
 												self.spades_exec, 
 												self.min_contig_len,
-												True)
+												True,
+												self.min_spades_contig_coverage)
 			spades_assembly.run()
 			self.logger.info("Rescaffold 1st assembly with all reads")
 			# Next we want to scaffold by using all of the original reads to join up the small contigs.
@@ -71,6 +78,7 @@ class PlasmidTron:
 									self.kmer,
 									self.min_kmers_threshold, 
 									self.max_kmers_threshold)
+			kmc_fastas.append(kmc_fasta)
 			
 			# Pull out any reads matching the kmers found in the assembly
 			self.logger.info("Pull out reads from original fastq files matching assembly kmers")
@@ -86,16 +94,17 @@ class PlasmidTron:
 				spades_assembly.cleanup()
 			
 			self.logger.info("Reassemble with SPAdes")
-			spades_assembly = SpadesAssembly(	sample, 
+			final_spades_assembly = SpadesAssembly(	sample, 
 												self.output_directory, 
 												self.threads, 
 												self.kmer, 
 												self.spades_exec, 
 												self.min_contig_len,
-												False)
-			spades_assembly.run()
-			spades_assemblies.append(spades_assembly)
-			print(spades_assembly.filtered_spades_assembly_file()+"\n")
+												False,
+												self.min_spades_contig_coverage)
+			final_spades_assembly.run()
+			spades_assemblies.append(final_spades_assembly)
+			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
 			
 		method_file = Methods(os.path.join(self.output_directory, 'methods_summary.txt'), trait_samples, nontrait_samples, self.min_kmers_threshold, self.min_contig_len, self.start_time, self.spades_exec)
 		method_file.create_file()
@@ -107,6 +116,9 @@ class PlasmidTron:
 				kmc_sample.cleanup()
 				
 			kmc_complex.cleanup()
+			
+			for kmc_fasta in kmc_fastas:
+				kmc_fasta.cleanup()
 			
 			for kmc_filter in kmc_filters:
 				kmc_filter.cleanup()
