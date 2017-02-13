@@ -3,6 +3,7 @@ import os
 import logging
 import subprocess
 import tempfile
+import shutil
 
 class KmcFasta:
 	def __init__(self,output_directory, input_filename, threads, kmer, min_kmers_threshold, max_kmers_threshold):

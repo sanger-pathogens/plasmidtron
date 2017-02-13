@@ -1,5 +1,9 @@
 v0.1.2 - 1/02/17
 ------
+Allow for careful flag to be used with SPAdes.
+
+v0.1.2 - 1/02/17
+------
 Allow for low coverage contigs to be filtered out.
 
 v0.1.1 - 31/01/17
