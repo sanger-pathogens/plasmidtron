@@ -3,6 +3,7 @@ import logging
 import subprocess
 import re
 import time
+from textwrap import TextWrapper
  
 '''Produce a file with a paragraph of text and references which can easily be used in a publication'''
 class Methods:
@@ -61,19 +62,22 @@ class Methods:
 
 	def create_file(self):
 		self.logger.info("Creating file with methods")
+		wrapper = TextWrapper()
 		with open(self.filename, 'w') as output_fileh:
-			output_fileh.write(self.methods_paragraph(len(self.trait_samples),len(self.nontrait_samples), self.plasmidtron_version(),self.kmc_version(), self.min_kmers_threshold, self.spades_version(), self.min_contig_length, self.running_time() ))
+			output_fileh.write('Method\n')
+			
+			output_fileh.write(wrapper.fill(self.methods_paragraph(len(self.trait_samples),len(self.nontrait_samples), self.plasmidtron_version(),self.kmc_version(), self.min_kmers_threshold, self.spades_version(), self.min_contig_length, self.running_time() )))
+			
 			output_fileh.write('\n\nReferences\n')
-			output_fileh.write(self.references_paragraph())
+			output_fileh.write(wrapper.fill(self.references_paragraph()))
 
 	def methods_paragraph(self, num_trait_samples, num_non_trait_samples, plasmidtron_version,kmc_version, min_kmers_threshold, spades_version, min_contig_length, running_time ):
-		methods_text =  'Method\n\n'
-		methods_text += 'A set of '+ str(num_trait_samples) +' samples displayed a known phenotype/trait.\n'
-		methods_text += 'To investigate this, these samples were sequenced using Illumina to produced paired ended reads in FASTQ format.\n'
-		methods_text += 'These were provided to PlasmidTron (v'+ plasmidtron_version +')(Page et. al., 2017) along with '+ str(num_non_trait_samples)+' control samples which do not display the phenotype/trait.\n'
-		methods_text += 'A k-mer analysis of the sets was performed using KMC (v'+ kmc_version +') (Deorowicz et. al., 2015) where a k-mer must be seen at least '+ str(min_kmers_threshold) +' times in a sample to be considered.\n'
+		methods_text =  'A set of '+ str(num_trait_samples) +' samples displayed a known phenotype/trait. '
+		methods_text += 'To investigate this, these samples were sequenced using Illumina to produced paired ended reads in FASTQ format. '
+		methods_text += 'These were provided to PlasmidTron (v'+ plasmidtron_version +')(Page et. al., 2017) along with '+ str(num_non_trait_samples)+' control samples which do not display the phenotype/trait. '
+		methods_text += 'A k-mer analysis of the sets was performed using KMC (v'+ kmc_version +') (Deorowicz et. al., 2015) where a k-mer must be seen at least '+ str(min_kmers_threshold) +' times in a sample to be considered. '
 		methods_text += 'The paired reads, which contained k-mers only found in the phenotype/trait set, were extracted and de novo assembled with SPAdes (v'+ spades_version +') (Bankevich et. al., 2012).\n'
-		methods_text += 'Sequences in the resulting assemblies less than '+str(min_contig_length)+' bases long were excluded. The total running time was '+str(running_time)+' seconds.\n'
+		methods_text += 'Sequences in the resulting assemblies less than '+str(min_contig_length)+' bases long were excluded. The total running time was '+str(running_time)+' seconds. '
 		return methods_text
 		
 	def references_paragraph(self):

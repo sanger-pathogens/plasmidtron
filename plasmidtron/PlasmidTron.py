@@ -77,8 +77,9 @@ class PlasmidTron:
 									spades_assembly.filtered_spades_assembly_file(), 
 									self.threads, 
 									self.kmer,
-									self.min_kmers_threshold, 
+									1, 
 									self.max_kmers_threshold)
+			kmc_fasta.run()
 			kmc_fastas.append(kmc_fasta)
 			
 			# Pull out any reads matching the kmers found in the assembly
@@ -86,7 +87,7 @@ class PlasmidTron:
 			kmc_filter = KmcFilter(	sample, 
 									self.output_directory, 
 									self.threads, 
-									kmc_fastas.output_database_name())
+									kmc_fasta.output_database_name())
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 			
