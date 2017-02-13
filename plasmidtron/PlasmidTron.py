@@ -66,7 +66,8 @@ class PlasmidTron:
 												self.spades_exec, 
 												self.min_contig_len,
 												True,
-												self.min_spades_contig_coverage)
+												self.min_spades_contig_coverage,
+												False)
 			spades_assembly.run()
 			self.logger.info("Rescaffold 1st assembly with all reads")
 			# Next we want to scaffold by using all of the original reads to join up the small contigs.
@@ -85,7 +86,7 @@ class PlasmidTron:
 			kmc_filter = KmcFilter(	sample, 
 									self.output_directory, 
 									self.threads, 
-									kmc_complex.result_database())
+									kmc_fastas.output_database_name())
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 			
@@ -101,7 +102,8 @@ class PlasmidTron:
 												self.spades_exec, 
 												self.min_contig_len,
 												False,
-												self.min_spades_contig_coverage)
+												self.min_spades_contig_coverage,
+												True)
 			final_spades_assembly.run()
 			spades_assemblies.append(final_spades_assembly)
 			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
