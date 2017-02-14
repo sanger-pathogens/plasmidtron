@@ -74,10 +74,16 @@ class SpadesAssembly:
 		self.remove_small_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
 
 	def cleanup(self):
-		shutil.rmtree(os.path.join(self.spades_output_directory(), 'tmp' ))
-		shutil.rmtree(os.path.join(self.spades_output_directory(), 'mismatch_corrector' ))
-		shutil.rmtree(os.path.join(self.spades_output_directory(), 'misc' ))
-		shutil.rmtree(os.path.join(self.spades_output_directory(), 'K'+str(self.kmer) ))
+		self.__remove_spades_subdirectory_if_exists('tmp')
+		self.__remove_spades_subdirectory_if_exists('mismatch_corrector' )
+		self.__remove_spades_subdirectory_if_exists('misc' )
+		self.__remove_spades_subdirectory_if_exists('K'+str(self.kmer) )
 		if self.use_temp_directory:
 			shutil.rmtree(self.temp_working_dir)
+			
+	def __remove_spades_subdirectory_if_exists(self,subdirectory):
+		if os.path.exists(os.path.join(self.spades_output_directory(), subdirectory )):
+			shutil.rmtree(os.path.join(self.spades_output_directory(), subdirectory )) 
+			
+	
 		
