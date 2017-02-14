@@ -15,6 +15,8 @@ class SpreadsheetParser:
 		with open(self.filename) as csvfile:
 			spreadsheetreader = csv.reader(csvfile, delimiter = ',')
 			for row in spreadsheetreader:
+				if len(row) < 2:
+					continue
 				forward_file = row[0]
 				reverse_file = row[1]
 
