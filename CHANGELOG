@@ -1,3 +1,7 @@
+v0.1.5 - 17/02/17
+------
+Skip assembly step if all the data is filtered out.
+
 v0.1.4 - 14/02/17
 ------
 Check SPAdes directories before deleting.
