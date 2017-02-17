@@ -59,6 +59,7 @@ class PlasmidTron:
 		kmc_fastas = []
 		spades_assemblies = []
 		for sample in trait_samples:
+			self.logger.info("First assembly with reads only matching kmers")
 			spades_assembly = SpadesAssembly(	sample, 
 												self.output_directory, 
 												self.threads, 
@@ -69,6 +70,11 @@ class PlasmidTron:
 												self.min_spades_contig_coverage,
 												False)
 			spades_assembly.run()
+			
+			if os.path.getsize(spades_assembly.filtered_spades_assembly_file()) <= self.min_contig_len:
+				self.logger.info("Theres not enough data in the first assembly after filtering, so skipping the rest of the steps for this sample.")
+				continue
+			
 			self.logger.info("Rescaffold 1st assembly with all reads")
 			# Next we want to scaffold by using all of the original reads to join up the small contigs.
 			# Extract all of the kmers found in the filtered assembly
@@ -111,7 +117,9 @@ class PlasmidTron:
 			
 		method_file = Methods(os.path.join(self.output_directory, 'methods_summary.txt'), trait_samples, nontrait_samples, self.min_kmers_threshold, self.min_contig_len, self.start_time, self.spades_exec)
 		method_file.create_file()
+		self.cleanup(kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies)
 		
+	def cleanup(self,kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies):
 		if not self.verbose:
 			# Delete all sample temp directories
 			self.logger.info("Deleting intermediate files, use --verbose if you wish to keep them")
