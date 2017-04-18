@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-version = 'x'
+version = 'x.y.z'
 if os.path.exists('VERSION'):
   version = open('VERSION').read().strip()
 
@@ -17,6 +17,7 @@ setup(
     description='plasmidtron: a tool to assemble parts of a genome responsible for a trait',
 	long_description=read('README.md'),
     packages = find_packages(),
+	package_data={'plasmidtron': ['example_data/*']},
     author='Andrew J. Page, Alexander Wailan',
     author_email='path-help@sanger.ac.uk',
     url='https://github.com/sanger-pathogens/plasmidtron',

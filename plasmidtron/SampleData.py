@@ -1,7 +1,7 @@
 import os
  
 class SampleData:
-	def __init__(self,forward_file, reverse_file):
+	def __init__(self,forward_file, reverse_file = None):
 		self.forward_file = forward_file
 		self.reverse_file = reverse_file
 		self.file_of_fastq_files = ''

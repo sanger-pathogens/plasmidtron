@@ -28,7 +28,7 @@ class PlasmidTron:
 		self.min_contig_len             = options.min_contig_len
 		self.action                     = options.action
 		self.min_spades_contig_coverage = options.min_spades_contig_coverage
-		
+		self.keep_files                 = options.keep_files
 		
 		if self.verbose:
 			self.logger.setLevel(10)

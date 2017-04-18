@@ -1,5 +1,6 @@
 import unittest
 import os
+import shutil
 from plasmidtron.SpadesAssembly import SpadesAssembly
 from plasmidtron.SampleData import SampleData
 
@@ -20,6 +21,7 @@ class TestSpadesAssembly(unittest.TestCase):
 			
 			self.assertEqual(actual_config_content,expected_config_content)
 		os.remove(os.path.join(data_dir, 'actual_assembly_without_small_contigs.fa'))
+		shutil.rmtree('abc')
 		
 	def test_filtering_low_coverage_contigs(self):
 		sample = SampleData('/path/to/sample_1.fastq.gz','/path/to/sample_2.fastq.gz' )
