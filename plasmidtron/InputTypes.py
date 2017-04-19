@@ -3,6 +3,12 @@ import argparse
 
 class InputTypes:
 	
+	'''All of the input files listed should exist'''
+	def is_input_file_valid(filename):
+		if not os.path.exists(filename):
+			raise argparse.ArgumentTypeError('Cannot access input file')
+		return filename
+		
 	def is_output_directory_valid(filename):
 		if os.path.exists(filename):
 			raise argparse.ArgumentTypeError("The output directory already exists")

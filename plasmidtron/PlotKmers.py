@@ -12,18 +12,21 @@ from plasmidtron.KmcFasta import KmcFasta
  
 '''Given a list of assembly files in FASTA format, output a kmer presence/absense plot'''
 class PlotKmers:
-	def __init__(self,assemblies,output_directory,threads,kmer,max_kmers_threshold, verbose):
+	def __init__(self,assemblies,output_directory,threads,kmer,max_kmers_threshold, verbose, kmer_plot_filename):
+		self.output_directory = output_directory
+		os.makedirs(self.output_directory)
+		
 		self.assemblies = []
 		for assembly_file in assemblies:
 			self.assemblies.append(os.path.abspath(assembly_file))
-		
-		self.output_directory = output_directory
+
+		self.kmer_plot_filename = kmer_plot_filename
 		self.threads = threads
 		self.kmer = kmer 
 		self.max_kmers_threshold = max_kmers_threshold
 		self.verbose = verbose
 		self.temp_working_dir = tempfile.mkdtemp(dir=os.path.abspath(self.output_directory))
-		
+
 		self.logger = logging.getLogger(__name__)
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
@@ -34,6 +37,7 @@ class PlotKmers:
 		kmers_to_assemblies = self.get_kmers_to_assemblies()
 		kmer_matrix = self.create_matrix_for_plot(kmers_to_assemblies)
 		self.plot_kmer_matrix(kmer_matrix)
+		self.cleanup()
 
 	def get_kmers_to_assemblies(self):
 		self.logger.warning('Extract kmers from assemblies')
@@ -75,11 +79,11 @@ class PlotKmers:
 		
 	def plot_kmer_matrix(self, kmer_matrix):
 		plt.matshow(kmer_matrix, cmap=plt.cm.gray)
-		plt.show()
+		plt.savefig(os.path.join(self.output_directory,self.kmer_plot_filename))
 
 	def get_kmers_from_db(self,database):
 		self.logger.warning('Get kmers from database %s', database)
-		dump_file = 'dump.txt'
+		dump_file = os.path.join(self.temp_working_dir,'dump.txt')
 		command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file])
 		subprocess.call(command_to_run, shell=True)
 		
@@ -92,8 +96,9 @@ class PlotKmers:
 			for row in kmer_dump_reader:
 				kmers.append(row[0])
 				
-		####os.remove(dump_file)
+		os.remove(dump_file)
 		return kmers
 
 	def cleanup(self):
-		pass
+		shutil.rmtree(self.temp_working_dir)
+		

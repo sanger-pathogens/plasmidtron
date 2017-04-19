@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import os
+import pkg_resources
+sys.path.append('../')
+sys.path.append('./')
+from  plasmidtron.InputTypes import InputTypes
+from  plasmidtron.PlotKmers import PlotKmers
+
+version = ''
+try:
+	version = pkg_resources.get_distribution("plasmidtron").version
+except pkg_resources.DistributionNotFound:
+	version = 'x.y.z'
+
+parser = argparse.ArgumentParser(
+	description = 'Given a set of assemblies, produce a kmer plot showing whats in common',
+	usage = 'plotkmers [options] *.fa')
+parser.add_argument('output_directory', help='Output directory', type=InputTypes.is_output_directory_valid )
+parser.add_argument('assemblies', help='FASTA files which may be gzipped', nargs='+', type=InputTypes.is_input_file_valid)
+parser.add_argument('--plot_filename', '-p', help='Kmer to use, depends on read length [%(default)s]',  default = 'kmerplot.png')
+parser.add_argument('--kmer',	                     '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid,  default = 51)
+parser.add_argument('--max_kmers_threshold',	     '-x', help='Exclude k-mers occurring more than this [%(default)s]', type=InputTypes.is_max_kmers_threshold_valid,  default = 254)
+parser.add_argument('--threads',                     '-t', help='Number of threads [%(default)s]', type=InputTypes.is_threads_valid,  default = 1)
+parser.add_argument('--keep_files',                  '-f', action='store_true', help='Keep intermediate files [%(default)s]')
+parser.add_argument('--verbose',                     '-v', action='store_true', help='Turn on debugging [%(default)s]', default = 0)
+parser.add_argument('--version', action='version', version=str(version))
+
+options = parser.parse_args()
+
+plotkmers = PlotKmers(
+				options.assemblies, 
+				options.output_directory,
+				options.threads,
+				options.kmer,
+				options.max_kmers_threshold,
+				options.verbose,
+				options.plot_filename
+				 )
+plotkmers.generate_plot()
