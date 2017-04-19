@@ -26,6 +26,7 @@ setup(
     tests_require=['nose >= 1.3'],
     install_requires=[
            'biopython >= 1.68',
+		   'matplotlib >= 2.0.0', 
            'pyfastaq >= 3.12.0'
        ],
     license='GPLv3',
