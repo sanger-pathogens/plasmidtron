@@ -81,7 +81,8 @@ class PlasmidTron:
 												self.min_contig_len,
 												True,
 												self.min_spades_contig_coverage,
-												False)
+												False,
+												self.verbose)
 			spades_assembly.run()
 			
 			if os.path.getsize(spades_assembly.filtered_spades_assembly_file()) <= self.min_contig_len:
@@ -123,7 +124,8 @@ class PlasmidTron:
 												self.min_contig_len,
 												False,
 												self.min_spades_contig_coverage,
-												True)
+												True,
+												self.verbose)
 			final_spades_assembly.run()
 			spades_assemblies.append(final_spades_assembly)
 			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
