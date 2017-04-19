@@ -1,4 +1,5 @@
 import os
+import re 
  
 class SampleData:
 	def __init__(self,forward_file, reverse_file = None):
@@ -16,6 +17,13 @@ class SampleData:
 		basename = basename.replace('_1.fastq','')
 		return basename
 		
+	def is_a_fasta(self):
+		m = re.search('\.(fasta|fa|fsa|fna)(.gz)?$', self.forward_file)
+		if m and m.group(0):
+			return True
+		else:
+			return False
+	
 	def cleanup(self):
 		os.remove(self.filtered_forward_file)
 		os.remove(self.filtered_reverse_file)

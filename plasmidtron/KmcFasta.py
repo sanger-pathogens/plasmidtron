@@ -23,7 +23,7 @@ class KmcFasta:
 		return ' '.join(['kmc', '-k'+str(self.kmer), '-ci'+str(self.min_kmers_threshold), '-cx'+str(self.max_kmers_threshold), '-t'+str(self.threads), '-fm', self.input_filename, self.output_database_name(), self.temp_working_dir])
 	
 	def run(self):	
-		self.logger.info("Extracting Kmers from FASTA file" )
+		self.logger.warning("Extracting Kmers from FASTA file" )
 		subprocess.call(self.kmc_command(),shell=True)
 	
 	def cleanup(self):

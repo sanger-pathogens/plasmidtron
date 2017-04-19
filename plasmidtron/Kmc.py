@@ -1,4 +1,4 @@
-'''Run KMC over a single sample (2 FASTQs) to get kmers database'''
+'''Run KMC over a single sample (2 FASTQs or 1 FASTA) to get kmers database'''
 
 import os
 import tempfile
@@ -8,7 +8,7 @@ import shutil
 from plasmidtron.SampleData import SampleData
 
 class Kmc:
-	def __init__(self,output_directory, sample, threads, kmer, min_kmers_threshold, max_kmers_threshold):
+	def __init__(self,output_directory, sample, threads, kmer, min_kmers_threshold, max_kmers_threshold, verbose):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.sample = sample
@@ -20,9 +20,15 @@ class Kmc:
 		self.populate_database_name()
 		self.populate_fofn_name()
 		
+		self.verbose = verbose
+		if self.verbose:
+			self.logger.setLevel(logging.DEBUG)
+		else:
+			self.logger.setLevel(logging.ERROR)
+		
 	def run(self):	
 		self.create_file_of_file_names(self.sample.file_of_fastq_files)
-		self.logger.info("Running KMC command" )
+		self.logger.warning("Running KMC command" )
 		
 		subprocess.call(self.construct_kmc_command(),shell=True)
 	
@@ -38,14 +44,33 @@ class Kmc:
 		self.sample.file_of_fastq_files = os.path.join(self.temp_working_dir, 'fofn')
 	
 	def construct_kmc_command(self):
-		return " ".join(['kmc', 
+		redirect_output = ''
+		if self.verbose:
+			redirect_output = ''
+		else:
+			redirect_output = '> /dev/null 2>&1'
+		
+		command_to_run =  " ".join(['kmc', 
 			'-t' +  str(self.threads), 
 			'-ci' + str(self.min_kmers_threshold),
 			'-cx' + str(self.max_kmers_threshold),
 			'-k' + str(self.kmer),
+			self.file_type_option(),
 			'@' + self.sample.file_of_fastq_files,
 			self.sample.database_name,
-			self.temp_working_dir
+			self.temp_working_dir,
+			redirect_output
 		])
+		
+		self.logger.warning("Running: "+command_to_run )
+		return command_to_run
+		
+	'''A FASTA file needs a different option for KMC'''
+	def file_type_option(self):
+		if self.sample.is_a_fasta():
+			return '-fm'
+		else:
+			return '-fq'
+				
 	def cleanup(self):
 		shutil.rmtree(self.temp_working_dir)

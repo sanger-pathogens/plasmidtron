@@ -25,7 +25,7 @@ class KmcComplex:
 		return ' '.join([sample.basename.replace('#','_'), '=', sample.database_name])	
 		
 	def write_config_file(self, filename, input_section, output_section, output_parameters):
-		self.logger.info("Creating config file for 'complex' task")
+		self.logger.warning("Creating config file for 'complex' task")
 		with open(filename, 'w') as complex_config_file:
 			complex_config_file.write('INPUT:\n')
 			complex_config_file.write(input_section)
@@ -86,7 +86,7 @@ class KmcComplex:
 	
 	def run(self):
 		self.create_config_files()
-		self.logger.info("Running KMC complex command")
+		self.logger.warning("Running KMC complex command")
 		# kmc_tools doesnt allow for paths in the output database name (even though they say they do) so change working directory
 		# to prevent temp files polluting CWD
 		

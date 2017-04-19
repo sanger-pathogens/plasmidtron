@@ -17,10 +17,10 @@ except pkg_resources.DistributionNotFound:
 
 parser = argparse.ArgumentParser(
 	description = 'A tool to assemble parts of a genome responsible for a trait',
-	usage = 'plasmidtron [options] output_directory file_of_trait_fastqs file_of_nontrait_fastqs')
+	usage = 'plasmidtron [options] output_directory file_of_traits file_of_nontraits')
 parser.add_argument('output_directory', help='Output directory', type=InputTypes.is_output_directory_valid )
-parser.add_argument('file_of_trait_fastqs', help='File of filenames of trait (case) FASTQs', type=InputTypes.is_file_of_trait_fastqs_valid)
-parser.add_argument('file_of_nontrait_fastqs', help='File of filenames of nontrait (control) FASTQs', type=InputTypes.is_file_of_nontrait_fastqs_valid)
+parser.add_argument('file_of_traits', help='File of filenames of trait (case) FASTQs', type=InputTypes.is_file_of_traits_valid)
+parser.add_argument('file_of_nontraits', help='File of filenames of nontrait (control) FASTQs', type=InputTypes.is_file_of_nontraits_valid)
 parser.add_argument('--action',	                     '-a', help='Control how the traits kmers are filtered for assembly [%(default)s]', choices=['intersection','union'],  default = 'union')
 parser.add_argument('--kmer',	                     '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid,  default = 51)
 parser.add_argument('--min_contig_len',	             '-l', help='Minimum contig length in final assembly [%(default)s]', type=InputTypes.is_min_contig_len_valid, default = 3000)

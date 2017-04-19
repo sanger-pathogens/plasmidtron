@@ -28,3 +28,4 @@ class TestSpreadsheetParser(unittest.TestCase):
 		samples = i.extract_samples()
 		self.assertEqual(len(samples),1)
 		self.assertEqual(samples[0].forward_file,'plasmidtron/tests/data/spreadsheetparser/sampleA.fasta')
+		

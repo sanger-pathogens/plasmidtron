@@ -58,18 +58,18 @@ class SpadesAssembly:
 			sequences = []
 			for record in SeqIO.parse(spades_input_file, "fasta"):
 				if self.sequence_coverage(record.id) < self.min_spades_contig_coverage:
-					self.logger.info("Excluding contig with coverage of "+ str(self.sequence_coverage(record.id))+ " from "+ self.spades_assembly_file())
+					self.logger.warning("Excluding contig with coverage of "+ str(self.sequence_coverage(record.id))+ " from "+ self.spades_assembly_file())
 					continue
 				
 				if len(record.seq) > self.minimum_length:
 					sequences.append(record)
 				else:
-					self.logger.info("Excluding contig of length "+ str(len(record.seq))+ " from "+ self.spades_assembly_file() )
+					self.logger.warning("Excluding contig of length "+ str(len(record.seq))+ " from "+ self.spades_assembly_file() )
 			
 			SeqIO.write(sequences, spades_output_file, "fasta")
 	
 	def run(self):
-		self.logger.info("Assembling sample" )
+		self.logger.warning("Assembling sample" )
 		subprocess.call(self.spades_command(), shell=True)
 		self.remove_small_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
 
