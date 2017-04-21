@@ -98,7 +98,8 @@ class PlasmidTron:
 									self.threads, 
 									self.kmer,
 									1, 
-									self.max_kmers_threshold)
+									self.max_kmers_threshold,
+									self.verbose)
 			kmc_fasta.run()
 			kmc_fastas.append(kmc_fasta)
 			

@@ -23,6 +23,7 @@ parser.add_argument('assemblies', help='FASTA files which may be gzipped', nargs
 parser.add_argument('--plot_filename', '-p', help='Kmer to use, depends on read length [%(default)s]',  default = 'kmerplot.png')
 parser.add_argument('--kmer',	                     '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid,  default = 51)
 parser.add_argument('--max_kmers_threshold',	     '-x', help='Exclude k-mers occurring more than this [%(default)s]', type=InputTypes.is_max_kmers_threshold_valid,  default = 254)
+parser.add_argument('--max_kmers_to_show',	     '-s', help='If there are too many kmers to view, subsample [%(default)s]', type=int, default = 100000)
 parser.add_argument('--threads',                     '-t', help='Number of threads [%(default)s]', type=InputTypes.is_threads_valid,  default = 1)
 parser.add_argument('--keep_files',                  '-f', action='store_true', help='Keep intermediate files [%(default)s]')
 parser.add_argument('--verbose',                     '-v', action='store_true', help='Turn on debugging [%(default)s]', default = 0)
@@ -37,6 +38,7 @@ plotkmers = PlotKmers(
 				options.kmer,
 				options.max_kmers_threshold,
 				options.verbose,
-				options.plot_filename
+				options.plot_filename,
+				options.max_kmers_to_show
 				 )
 plotkmers.generate_plot()
