@@ -10,7 +10,7 @@ class FastqReadNames:
 		self.output_readnames_file = output_readnames_file
 	
 	def extract_readnames_from_fastq(self):
-		self.logger.info("Extracting read names from FASTQ file")
+		self.logger.warning("Extracting read names from FASTQ file")
 		with open(self.fastq_file, "r") as fastq_file_input, open(self.output_readnames_file, "w") as readnames_output:
 			for record in SeqIO.parse(fastq_file_input, "fastq"):
 				readnames_output.write(record.id + '\n')

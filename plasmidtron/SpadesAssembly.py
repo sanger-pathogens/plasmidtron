@@ -8,7 +8,7 @@ from Bio import SeqIO
  
 '''Assemble a filtered sample with SPAdes'''
 class SpadesAssembly:
-	def __init__(self, sample, output_directory, threads, kmer, spades_exec, minimum_length, use_temp_directory,min_spades_contig_coverage, assemble_with_careful):
+	def __init__(self, sample, output_directory, threads, kmer, spades_exec, minimum_length, use_temp_directory,min_spades_contig_coverage, assemble_with_careful,verbose):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.sample = sample
@@ -19,6 +19,7 @@ class SpadesAssembly:
 		self.use_temp_directory = use_temp_directory
 		self.min_spades_contig_coverage = min_spades_contig_coverage
 		self.assemble_with_careful = assemble_with_careful
+		self.verbose = verbose
 
 		if not os.path.exists(self.output_directory):
 			os.makedirs(self.output_directory)
@@ -31,11 +32,17 @@ class SpadesAssembly:
 			return os.path.join(self.output_directory, 'spades_'+self.sample.basename)
 
 	def spades_command(self):
+		redirect_output = ''
+		if self.verbose:
+			redirect_output = ''
+		else:
+			redirect_output = '> /dev/null 2>&1'
+		
 		careful_flag = ''
 		if self.assemble_with_careful :
 			careful_flag = '--careful'
 			
-		return ' '.join([self.spades_exec, careful_flag, '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory() ])
+		return ' '.join([self.spades_exec, careful_flag, '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory(), redirect_output ])
 
 	def spades_assembly_file(self):
 		return os.path.join(self.spades_output_directory(), 'scaffolds.fasta')
@@ -58,18 +65,18 @@ class SpadesAssembly:
 			sequences = []
 			for record in SeqIO.parse(spades_input_file, "fasta"):
 				if self.sequence_coverage(record.id) < self.min_spades_contig_coverage:
-					self.logger.info("Excluding contig with coverage of "+ str(self.sequence_coverage(record.id))+ " from "+ self.spades_assembly_file())
+					self.logger.warning("Excluding contig with coverage of "+ str(self.sequence_coverage(record.id))+ " from "+ self.spades_assembly_file())
 					continue
 				
 				if len(record.seq) > self.minimum_length:
 					sequences.append(record)
 				else:
-					self.logger.info("Excluding contig of length "+ str(len(record.seq))+ " from "+ self.spades_assembly_file() )
+					self.logger.warning("Excluding contig of length "+ str(len(record.seq))+ " from "+ self.spades_assembly_file() )
 			
 			SeqIO.write(sequences, spades_output_file, "fasta")
 	
 	def run(self):
-		self.logger.info("Assembling sample" )
+		self.logger.warning("Assembling sample" )
 		subprocess.call(self.spades_command(), shell=True)
 		self.remove_small_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
 

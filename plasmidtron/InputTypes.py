@@ -3,17 +3,23 @@ import argparse
 
 class InputTypes:
 	
+	'''All of the input files listed should exist'''
+	def is_input_file_valid(filename):
+		if not os.path.exists(filename):
+			raise argparse.ArgumentTypeError('Cannot access input file')
+		return filename
+		
 	def is_output_directory_valid(filename):
 		if os.path.exists(filename):
 			raise argparse.ArgumentTypeError("The output directory already exists")
 		return filename
 	
-	def is_file_of_trait_fastqs_valid(filename):
+	def is_file_of_traits_valid(filename):
 		if not os.path.exists(filename):
 			raise argparse.ArgumentTypeError("Cannot access the traits input file")
 		return filename
 		
-	def is_file_of_nontrait_fastqs_valid(filename):
+	def is_file_of_nontraits_valid(filename):
 		if not os.path.exists(filename):
 			raise argparse.ArgumentTypeError("Cannot access the nontraits input file")
 		return filename

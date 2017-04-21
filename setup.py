@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-version = 'x'
+version = 'x.y.z'
 if os.path.exists('VERSION'):
   version = open('VERSION').read().strip()
 
@@ -17,6 +17,7 @@ setup(
     description='plasmidtron: a tool to assemble parts of a genome responsible for a trait',
 	long_description=read('README.md'),
     packages = find_packages(),
+	package_data={'plasmidtron': ['example_data/*']},
     author='Andrew J. Page, Alexander Wailan',
     author_email='path-help@sanger.ac.uk',
     url='https://github.com/sanger-pathogens/plasmidtron',
@@ -25,6 +26,7 @@ setup(
     tests_require=['nose >= 1.3'],
     install_requires=[
            'biopython >= 1.68',
+		   'matplotlib >= 2.0.0', 
            'pyfastaq >= 3.12.0'
        ],
     license='GPLv3',

@@ -28,7 +28,7 @@ class KmcFilter:
 		return ' '.join(['fastaq', 'filter', '--ids_file', self.read_names_file, '--mate_in', self.sample.reverse_file, ' --mate_out', self.sample.filtered_reverse_file, self.sample.forward_file, self.sample.filtered_forward_file ])
 	
 	def filter_fastq_file_against_kmers(self):
-		self.logger.info("Filter reads against kmer database for sample")
+		self.logger.warning("Filter reads against kmer database for sample")
 		subprocess.call(self.kmc_filter_command(), shell=True)
 	
 		# The FASTQ file that comes out of kmc doesnt output all pairs, so we have to refilter it to get all mates.

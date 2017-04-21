@@ -61,7 +61,7 @@ class Methods:
 		return str(int(time.time()) - self.start_time)
 
 	def create_file(self):
-		self.logger.info("Creating file with methods")
+		self.logger.warning("Creating file with methods")
 		wrapper = TextWrapper()
 		with open(self.filename, 'w') as output_fileh:
 			output_fileh.write('Method\n')
