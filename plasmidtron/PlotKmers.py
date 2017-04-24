@@ -13,7 +13,7 @@ from plasmidtron.KmcFasta import KmcFasta
  
 '''Given a list of assembly files in FASTA format, output a kmer presence/absense plot'''
 class PlotKmers:
-	def __init__(self,assemblies,output_directory,threads,kmer,max_kmers_threshold, verbose, kmer_plot_filename, max_kmers_to_show):
+	def __init__(self,assemblies,output_directory,threads,kmer,max_kmers_threshold, verbose, kmer_plot_filename, max_kmers_to_show = 100000):
 		self.kmer_plot_filename = kmer_plot_filename
 		self.threads = threads
 		self.kmer = kmer 

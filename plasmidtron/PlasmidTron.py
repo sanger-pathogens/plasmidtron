@@ -11,6 +11,7 @@ from plasmidtron.Methods import Methods
 from plasmidtron.SampleData import SampleData
 from plasmidtron.SpadesAssembly import SpadesAssembly
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
+from plasmidtron.PlotKmers import PlotKmers
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -29,6 +30,7 @@ class PlasmidTron:
 		self.action                     = options.action
 		self.min_spades_contig_coverage = options.min_spades_contig_coverage
 		self.keep_files                 = options.keep_files
+		self.plot_filename              = options.plot_filename
 		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
@@ -131,11 +133,21 @@ class PlasmidTron:
 			spades_assemblies.append(final_spades_assembly)
 			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
 			
+		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies]
+		plot_kmers = PlotKmers( spades_assembly_files,
+								self.output_directory,
+								self.threads,
+								self.kmer,
+								self.max_kmers_threshold, 
+								self.verbose, 
+								self.plot_filename)
+		plot_kmers.generate_plot()
+			
 		method_file = Methods(os.path.join(self.output_directory, 'methods_summary.txt'), trait_samples, nontrait_samples, self.min_kmers_threshold, self.min_contig_len, self.start_time, self.spades_exec)
 		method_file.create_file()
-		self.cleanup(kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies)
+		self.cleanup(kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies, plot_kmers)
 		
-	def cleanup(self,kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies):
+	def cleanup(self,kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies, plot_kmers):
 		if not self.verbose:
 			# Delete all sample temp directories
 			self.logger.warning("Deleting intermediate files, use --verbose if you wish to keep them")
@@ -152,4 +164,6 @@ class PlasmidTron:
 			
 			for spades_assembly in spades_assemblies:
 				spades_assembly.cleanup()
+				
+			#plot_kmers.cleanup()
 		
