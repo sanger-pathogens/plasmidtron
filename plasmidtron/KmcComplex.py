@@ -10,7 +10,7 @@ from plasmidtron.SampleData import SampleData
 		
 
 class KmcComplex:
-	def __init__(self,output_directory, threads, min_kmers_threshold, trait_samples, nontrait_samples, action):
+	def __init__(self,output_directory, threads, min_kmers_threshold, trait_samples, nontrait_samples, action, verbose):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.threads = threads
@@ -19,6 +19,11 @@ class KmcComplex:
 		self.nontrait_samples = nontrait_samples
 		self.action = action
 		
+		self.verbose = verbose
+		if self.verbose:
+			self.logger.setLevel(logging.DEBUG)
+		else:
+			self.logger.setLevel(logging.ERROR)
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 
 	def sample_definition_line(self, sample):
@@ -79,10 +84,16 @@ class KmcComplex:
 		return set_operation_str
 	
 	def kmc_complex_command(self, config_file):
+		redirect_output = ''
+		if self.verbose:
+			redirect_output = ''
+		else:
+			redirect_output = '> /dev/null 2>&1'
+		
 		return " ".join(['kmc_tools', 
 			'-t' +  str(self.threads),
 			'complex',
-			config_file ])
+			config_file, redirect_output ])
 	
 	def run(self):
 		self.create_config_files()

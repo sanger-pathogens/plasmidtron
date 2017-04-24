@@ -46,7 +46,6 @@ class PlotKmers:
 		kmers_to_assemblies = self.get_kmers_to_assemblies()
 		kmer_matrix = self.create_matrix_for_plot(kmers_to_assemblies)
 		self.plot_kmer_matrix(kmer_matrix)
-		print(self.output_filename())
 		self.cleanup()
 
 	def get_kmers_to_assemblies(self):
@@ -111,7 +110,7 @@ class PlotKmers:
 	def get_kmers_from_db(self,database):
 		self.logger.warning('Get kmers from database %s', database)
 		dump_file = os.path.join(self.temp_working_dir,'dump.txt')
-		command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file])
+		command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file, self.redirect_output()])
 		subprocess.call(command_to_run, shell=True)
 		
 		kmers = []
@@ -125,6 +124,14 @@ class PlotKmers:
 				
 		os.remove(dump_file)
 		return kmers
+		
+	def redirect_output(self):
+		redirect_output_str = ''
+		if self.verbose:
+			redirect_output_str = ''
+		else:
+			redirect_output_str = '> /dev/null 2>&1'
+		return redirect_output_str
 
 	def cleanup(self):
 		shutil.rmtree(self.temp_working_dir)

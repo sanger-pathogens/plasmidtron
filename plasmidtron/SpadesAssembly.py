@@ -8,7 +8,7 @@ from Bio import SeqIO
  
 '''Assemble a filtered sample with SPAdes'''
 class SpadesAssembly:
-	def __init__(self, sample, output_directory, threads, kmer, spades_exec, minimum_length, use_temp_directory,min_spades_contig_coverage, assemble_with_careful,verbose):
+	def __init__(self, sample, output_directory, threads, kmer, spades_exec, minimum_length, use_temp_directory,min_spades_contig_coverage, assemble_with_careful, verbose):
 		self.logger = logging.getLogger(__name__)
 		self.output_directory = output_directory
 		self.sample = sample
@@ -20,6 +20,10 @@ class SpadesAssembly:
 		self.min_spades_contig_coverage = min_spades_contig_coverage
 		self.assemble_with_careful = assemble_with_careful
 		self.verbose = verbose
+		if self.verbose:
+			self.logger.setLevel(logging.DEBUG)
+		else:
+			self.logger.setLevel(logging.ERROR)
 
 		if not os.path.exists(self.output_directory):
 			os.makedirs(self.output_directory)

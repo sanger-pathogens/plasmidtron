@@ -4,8 +4,8 @@ set -x
 
 start_dir=$(pwd)
 
-KMC_VERSION=2.3.0
-SPADES_VERSION=3.9.1
+KMC_VERSION=${KMC_VERSION:-"2.3.0"}
+SPADES_VERSION=3.10.1
 
 KMC_DOWNLOAD_URL="http://sun.aei.polsl.pl/REFRESH/kmc/downloads/${KMC_VERSION}/linux/"
 SPADES_URL="http://cab.spbu.ru/files/release${SPADES_VERSION}/SPAdes-${SPADES_VERSION}-Linux.tar.gz"
@@ -56,5 +56,5 @@ update_path () {
 update_path ${build_dir}
 update_path "${spades_dir}/bin"
 
-pip install pyfastaq biopython
+pip install pyfastaq biopython matplotlib
 
