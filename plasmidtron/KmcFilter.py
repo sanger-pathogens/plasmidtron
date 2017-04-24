@@ -9,13 +9,13 @@ from plasmidtron.FastqReadNames import FastqReadNames
 class KmcFilter:
 	def __init__(self,sample, output_directory, threads,result_database, verbose):
 		self.logger = logging.getLogger(__name__)
+		self.verbose = verbose
 		self.sample = sample
 		self.threads = threads
 		self.result_database = result_database
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 		self.store_intermediate_files()
 		
-		self.verbose = verbose
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
 		else:
@@ -26,6 +26,9 @@ class KmcFilter:
 		self.read_names_file = os.path.join(self.temp_working_dir, 'read_names_file')
 		self.sample.filtered_forward_file = os.path.join(self.temp_working_dir, 'sample_1.fastq.gz')
 		self.sample.filtered_reverse_file = os.path.join(self.temp_working_dir, 'sample_2.fastq.gz')
+		
+		if self.verbose:
+			self.logger.warning('Filtered FASTQ files for sample %s:\t%s\t%s', self.sample.basename, self.sample.filtered_forward_file, self.sample.filtered_reverse_file)
 	
 	def redirect_output(self):
 		redirect_output_str = ''

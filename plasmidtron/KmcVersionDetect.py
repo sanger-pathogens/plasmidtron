@@ -8,11 +8,13 @@ class KmcVersionDetect:
 	def __init__(self, verbose):
 		self.logger = logging.getLogger(__name__)
 		self.verbose = verbose
-		self.kmc_version = self.find_version()
+		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
 		else:
 			self.logger.setLevel(logging.ERROR)
+			
+		self.kmc_version = self.find_version()
 	
 	'''Run the kmc command which contains the version string at the top'''
 	'''K-Mer Counter (KMC) ver. 2.3.0 (2015-08-21)'''
