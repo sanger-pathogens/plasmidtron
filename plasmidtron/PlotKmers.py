@@ -7,6 +7,9 @@ import csv
 import math
 import sys
 from collections import OrderedDict
+import matplotlib
+# Remove the need for a DISPLAY
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
 from plasmidtron.KmcFasta import KmcFasta
