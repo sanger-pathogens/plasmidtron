@@ -13,6 +13,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
 from plasmidtron.KmcFasta import KmcFasta
+from plasmidtron.KmcVersionDetect import KmcVersionDetect
  
 '''Given a list of assembly files in FASTA format, output a kmer presence/absense plot'''
 class PlotKmers:
@@ -25,6 +26,7 @@ class PlotKmers:
 		self.max_kmers_to_show = max_kmers_to_show
 		self.output_directory = output_directory
 		
+		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 		if not os.path.exists(self.output_directory):
 			os.makedirs(self.output_directory)
 		
@@ -113,7 +115,12 @@ class PlotKmers:
 	def get_kmers_from_db(self,database):
 		self.logger.warning('Get kmers from database %s', database)
 		dump_file = os.path.join(self.temp_working_dir,'dump.txt')
-		command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file, self.redirect_output()])
+
+		command_to_run = ''
+		if self.kmc_major_version == 2:
+			command_to_run =  ' '.join(['kmc_dump', database, dump_file, self.redirect_output()])
+		else:
+			command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file, self.redirect_output()])
 		subprocess.call(command_to_run, shell=True)
 		
 		kmers = []
