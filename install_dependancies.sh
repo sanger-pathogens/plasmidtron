@@ -35,7 +35,7 @@ download () {
 # --------------- KMC ------------------
 cd $build_dir
 
-if ["${KMC_VERSION}" == "2.3.0"]; then 
+if [ "${KMC_VERSION}" == "2.3.0" ]; then 
   download "${KMC2_DOWNLOAD_URL_BASE}kmc" "kmc"
   download "${KMC2_DOWNLOAD_URL_BASE}kmc_tools" "kmc_tools"
   download "${KMC2_DOWNLOAD_URL_BASE}kmc_dump" "kmc_tools"
