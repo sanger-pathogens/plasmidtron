@@ -2,6 +2,10 @@ language: python
 python:
   - "3.5"
 sudo: false
+cache:
+  directories:
+  - "build"
+  - "$HOME/.cache/pip"
 env:
   - KMC_VERSION=3.0.0
   - KMC_VERSION=2.3.0
