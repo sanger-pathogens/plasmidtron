@@ -98,13 +98,17 @@ class KmcComplex:
 	def run(self):
 		self.create_config_files()
 		self.logger.warning("Running KMC complex command")
+		
 		# kmc_tools doesnt allow for paths in the output database name (even though they say they do) so change working directory
 		# to prevent temp files polluting CWD
 		
 		original_cwd = os.getcwd()
 		os.chdir(self.temp_working_dir)
+		self.logger.warning('Traits %s', self.kmc_complex_command('traits_config_file'))
 		subprocess.call(self.kmc_complex_command('traits_config_file'), shell=True)
+		self.logger.warning('Non Traits %s', self.kmc_complex_command('nontraits_config_file'))
 		subprocess.call(self.kmc_complex_command('nontraits_config_file'), shell=True)
+		self.logger.warning('Combined %s', self.kmc_complex_command('combined_config_file'))
 		subprocess.call(self.kmc_complex_command('combined_config_file'), shell=True)
 		os.chdir(original_cwd)
 		

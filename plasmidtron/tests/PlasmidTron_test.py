@@ -43,3 +43,20 @@ class TestPlasmidTron(unittest.TestCase):
 		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/plot.png')))
 		shutil.rmtree(os.path.join(data_dir,'out'))
 		
+
+	def test_non_trait_fasta(self):
+		'''Given a nontrait file consisting only of a FASTA file, run the whole pipeline'''
+		if os.path.exists(os.path.join(data_dir,'out')):
+			shutil.rmtree(os.path.join(data_dir,'out'))
+		options = Options(os.path.join(data_dir,'out'), os.path.join(data_dir,'traits.csv'), os.path.join(data_dir,'fasta_nontraits.csv'),False, 1, 61, 20,200, 'spades.py', 100,'union', 1, False, 'plot.png')
+		
+		plasmid_tron = PlasmidTron(options)
+		plasmid_tron.run()
+		
+		final_assembly = os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/filtered_scaffolds.fasta')
+		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/spades_S_typhi_CT18_chromosome_pHCM2/scaffolds.fasta')))
+		self.assertTrue(os.path.isfile(final_assembly))
+		'''The final assembly should be about 6k so leave some margin for variation in SPAdes'''
+		self.assertTrue(os.path.getsize(final_assembly) > 5000)
+		self.assertTrue(os.path.isfile(os.path.join(data_dir,'out/plot.png')))
+		shutil.rmtree(os.path.join(data_dir,'out'))

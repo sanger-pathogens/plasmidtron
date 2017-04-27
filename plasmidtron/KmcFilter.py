@@ -46,6 +46,7 @@ class KmcFilter:
 	
 	def filter_fastq_file_against_kmers(self):
 		self.logger.warning("Filter reads against kmer database for sample")
+		self.logger.warning('%s',self.kmc_filter_command())
 		subprocess.call(self.kmc_filter_command(), shell=True)
 	
 		# The FASTQ file that comes out of kmc doesnt output all pairs, so we have to refilter it to get all mates.
@@ -53,6 +54,7 @@ class KmcFilter:
 		fastq_read_names.extract_readnames_from_fastq()
 	
 		# Given a file of read names, pull out the mate paired FASTQ files for the sample
+		self.logger.warning('%s',self.filtered_fastaq_command())
 		subprocess.call(self.filtered_fastaq_command(), shell=True)
 		
 	def cleanup(self):
