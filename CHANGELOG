@@ -1,3 +1,7 @@
+v0.1.7 - 27/04/17
+------
+Support for using FASTA files as input.
+
 v0.1.6 - 21/04/17
 ------
 Add a script to plot the kmers.
