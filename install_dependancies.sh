@@ -4,10 +4,12 @@ set -x
 
 start_dir=$(pwd)
 
-KMC_VERSION=2.3.0
-SPADES_VERSION=3.9.1
+KMC_VERSION=${KMC_VERSION:-"3.0.0"}
+SPADES_VERSION=3.10.1
 
-KMC_DOWNLOAD_URL="http://sun.aei.polsl.pl/REFRESH/kmc/downloads/${KMC_VERSION}/linux/"
+KMC3_DOWNLOAD_URL="https://github.com/refresh-bio/KMC/releases/download/v${KMC_VERSION}/KMC3.linux.tar.gz"
+KMC2_DOWNLOAD_URL_BASE="http://sun.aei.polsl.pl/REFRESH/kmc/downloads/${KMC_VERSION}/linux/"
+
 SPADES_URL="http://cab.spbu.ru/files/release${SPADES_VERSION}/SPAdes-${SPADES_VERSION}-Linux.tar.gz"
 
 # Make an install location
@@ -32,10 +34,18 @@ download () {
 
 # --------------- KMC ------------------
 cd $build_dir
-download "${KMC_DOWNLOAD_URL}kmc" "kmc"
-download "${KMC_DOWNLOAD_URL}kmc_tools" "kmc_tools"
+
+if [ "${KMC_VERSION}" == "2.3.0" ]; then 
+  download "${KMC2_DOWNLOAD_URL_BASE}kmc" "kmc"
+  download "${KMC2_DOWNLOAD_URL_BASE}kmc_tools" "kmc_tools"
+  download "${KMC2_DOWNLOAD_URL_BASE}kmc_dump" "kmc_dump"
+else
+  download "${KMC3_DOWNLOAD_URL}" "KMC3.linux.tar.gz"
+  tar xzf KMC3.linux.tar.gz
+fi
 chmod +x kmc
 chmod +x kmc_tools
+chmod +x kmc_dump
 
 # --------------- SPAdes ------------------
 cd $build_dir
@@ -56,5 +66,5 @@ update_path () {
 update_path ${build_dir}
 update_path "${spades_dir}/bin"
 
-pip install pyfastaq biopython
+pip install pyfastaq biopython matplotlib
 

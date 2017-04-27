@@ -3,7 +3,7 @@ You have a set of samples where you have a known phenotype, and a set of control
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)
 
-# Usage
+## Usage
 ```
 usage: plasmidtron [options] output_directory file_of_traits file_of_nontraits
 
@@ -11,26 +11,31 @@ A tool to assemble parts of a genome responsible for a trait
 
 positional arguments:
   output_directory      Output directory
-  file_of_traits  	File of filenames of trait (case) in FASTA or FASTQ format
-  file_of_nontraits
-                        File of filenames of nontrait (control) FASTA or FASTQ format
+  file_of_traits        File of filenames of trait (case) FASTQs
+  file_of_nontraits     File of filenames of nontrait (control) FASTQs
 
 optional arguments:
   -h, --help            show this help message and exit
   --action {intersection,union}, -a {intersection,union}
                         Control how the traits kmers are filtered for assembly
                         [union]
+  --keep_files, -f      Keep intermediate files [False]
   --kmer KMER, -k KMER  Kmer to use, depends on read length [51]
   --min_contig_len MIN_CONTIG_LEN, -l MIN_CONTIG_LEN
-                        Minimum contig length in final assembly [1000]
+                        Minimum contig length in final assembly [3000]
+  --min_spades_contig_coverage MIN_SPADES_CONTIG_COVERAGE, -c MIN_SPADES_CONTIG_COVERAGE
+                        Filter out contigs with low coverage. Set to 0 to keep
+                        all. [30]
   --min_kmers_threshold MIN_KMERS_THRESHOLD, -m MIN_KMERS_THRESHOLD
-                        Exclude k-mers occurring less than this [25]
+                        Exclude k-mers occurring less than this [30]
   --max_kmers_threshold MAX_KMERS_THRESHOLD, -x MAX_KMERS_THRESHOLD
                         Exclude k-mers occurring more than this [254]
-  --threads THREADS, -t THREADS
-                        Number of threads [1]
+  --plot_filename PLOT_FILENAME, -p PLOT_FILENAME
+                        Kmer to use, depends on read length [kmerplot.png]
   --spades_exec SPADES_EXEC, -s SPADES_EXEC
                         Set the SPAdes executable [spades.py]
+  --threads THREADS, -t THREADS
+                        Number of threads [1]
   --verbose, -v         Turn on debugging [0]
   --version             show program's version number and exit
 ```
@@ -55,11 +60,45 @@ __min_spades_contig_coverage__: Filter out contigs with less than this coverage 
 
 The following parameters have no impact on the results:
 
+__keep_files__: Keep all intermediate and temporary files. The default is to delete them.
+
+__plot_filename__: The name of the kmer plot file. By default it is called kmerplot.png and is located in the output directory.
+
 __threads__: This sets the number of threads available to KMC and SPAdes. It should never be more than the number of CPUs available on the server. If you use a compute cluster, make sure to request the same number of threads on a single server. It defaults to 1 and you will get a reasonable speed increase by adding a few CPUs, but the benefit tails off quite rapidly since the I/O becomes the limiting factor (speed of reading files from a disk or network).
 
 __spades_exec__: By default SPAdes is assumed to be in your PATH and called spades.py. You can set this to point to a different executable, which might be required if you have multiple versions of SPAdes installed.
 
-__verbose__: By default the output is limited and all intermediate files are deleted. Setting this flag allows you output more details of the software as it runs and it keeps the intermediate files.
+__verbose__: By default the output is limited and the software runs quietly. Setting this flag allows you to output more details of the software as it runs. There is a lot of output with this option turned on.
+
+
+# plotkmers
+The kmer plots can be run independantly of the plasmidtron script if you wish. All you need is a set of FASTA files as input and it will produce a plot showing the presence and absense of kmers in each sample. The input parameters are similar to the plasmidtron script.
+
+```
+usage: plotkmers [options] *.fa
+
+Given a set of assemblies, produce a kmer plot showing whats in common
+
+positional arguments:
+  output_directory      Output directory
+  assemblies            FASTA files which may be gzipped
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --plot_filename PLOT_FILENAME, -p PLOT_FILENAME
+                        Kmer to use, depends on read length [kmerplot.png]
+  --kmer KMER, -k KMER  Kmer to use, depends on read length [51]
+  --max_kmers_threshold MAX_KMERS_THRESHOLD, -x MAX_KMERS_THRESHOLD
+                        Exclude k-mers occurring more than this [254]
+  --max_kmers_to_show MAX_KMERS_TO_SHOW, -s MAX_KMERS_TO_SHOW
+                        If there are too many kmers to view, subsample
+                        [100000]
+  --threads THREADS, -t THREADS
+                        Number of threads [1]
+  --keep_files, -f      Keep intermediate files [False]
+  --verbose, -v         Turn on debugging [0]
+  --version             show program's version number and exit
+```
 
 ## Required resources
 ### RAM (memory)

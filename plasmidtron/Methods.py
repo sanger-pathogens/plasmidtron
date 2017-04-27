@@ -7,7 +7,7 @@ from textwrap import TextWrapper
  
 '''Produce a file with a paragraph of text and references which can easily be used in a publication'''
 class Methods:
-	def __init__(self, filename,trait_samples, nontrait_samples, min_kmers_threshold, min_contig_length, start_time, spades_exec ):
+	def __init__(self, filename,trait_samples, nontrait_samples, min_kmers_threshold, min_contig_length, start_time, spades_exec, verbose):
 		self.logger = logging.getLogger(__name__)
 		self.filename              = filename           
 		self.trait_samples         = trait_samples      
@@ -16,6 +16,11 @@ class Methods:
 		self.min_contig_length     = min_contig_length  
 		self.start_time            = start_time         
 		self.spades_exec           = spades_exec
+		self.verbose = verbose
+		if self.verbose:
+			self.logger.setLevel(logging.DEBUG)
+		else:
+			self.logger.setLevel(logging.ERROR)
 		
 	def plasmidtron_version(self):
 		current_version= 'X'

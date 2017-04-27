@@ -35,7 +35,8 @@ class Kmc:
 	def create_file_of_file_names(self, filename):
 		with open(filename, 'w') as file_of_sample_fastqs:
 			file_of_sample_fastqs.write(self.sample.forward_file + "\n")
-			file_of_sample_fastqs.write(self.sample.reverse_file + "\n")
+			if not self.sample.is_a_fasta():
+				file_of_sample_fastqs.write(self.sample.reverse_file + "\n")
 			
 	def populate_database_name(self):
 		self.sample.database_name =  os.path.join(self.temp_working_dir,'kmc_' + self.sample.basename)

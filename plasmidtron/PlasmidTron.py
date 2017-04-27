@@ -2,7 +2,6 @@ import sys
 import os
 import logging
 import time
-from plasmidtron.FastqReadNames import FastqReadNames
 from plasmidtron.Kmc import Kmc
 from plasmidtron.KmcComplex import KmcComplex
 from plasmidtron.KmcFasta import KmcFasta
@@ -11,6 +10,8 @@ from plasmidtron.Methods import Methods
 from plasmidtron.SampleData import SampleData
 from plasmidtron.SpadesAssembly import SpadesAssembly
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
+from plasmidtron.PlotKmers import PlotKmers
+from plasmidtron.KmcVersionDetect import KmcVersionDetect
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -29,16 +30,19 @@ class PlasmidTron:
 		self.action                     = options.action
 		self.min_spades_contig_coverage = options.min_spades_contig_coverage
 		self.keep_files                 = options.keep_files
+		self.plot_filename              = options.plot_filename
 		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
 		else:
 			self.logger.setLevel(logging.ERROR)
+		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 
 	def run(self):
+		self.logger.warning('Using KMC syntax version %s', self.kmc_major_version)
 		os.makedirs(self.output_directory)
-		trait_samples = SpreadsheetParser(self.file_of_traits).extract_samples()
-		nontrait_samples = SpreadsheetParser(self.file_of_nontraits).extract_samples()
+		trait_samples = SpreadsheetParser(self.file_of_traits, self.verbose).extract_samples()
+		nontrait_samples = SpreadsheetParser(self.file_of_nontraits, self.verbose).extract_samples()
 
 		self.logger.warning('Generating kmer databases for all samples')
 		kmc_samples =[]
@@ -50,7 +54,7 @@ class PlasmidTron:
 				kmc_samples.append(kmc_sample)
 		
 		self.logger.warning("Generating a database of kmers which are in the traits but not in the nontraits set")
-		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples, self.action)
+		kmc_complex = KmcComplex(self.output_directory, self.threads, self.min_kmers_threshold, trait_samples, nontrait_samples, self.action, self.verbose)
 		kmc_complex.run()
 
 		kmc_filters = []
@@ -60,7 +64,7 @@ class PlasmidTron:
 				continue
 				
 			self.logger.warning('Filtering reads which contain trait kmers %s', sample.basename)
-			kmc_filter = KmcFilter(sample, self.output_directory, self.threads,kmc_complex.result_database())
+			kmc_filter = KmcFilter(sample, self.output_directory, self.threads,kmc_complex.result_database(), self.verbose)
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 		
@@ -108,7 +112,8 @@ class PlasmidTron:
 			kmc_filter = KmcFilter(	sample, 
 									self.output_directory, 
 									self.threads, 
-									kmc_fasta.output_database_name())
+									kmc_fasta.output_database_name(),
+									self.verbose)
 			kmc_filter.filter_fastq_file_against_kmers()
 			kmc_filters.append(kmc_filter)
 			
@@ -131,11 +136,29 @@ class PlasmidTron:
 			spades_assemblies.append(final_spades_assembly)
 			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
 			
-		method_file = Methods(os.path.join(self.output_directory, 'methods_summary.txt'), trait_samples, nontrait_samples, self.min_kmers_threshold, self.min_contig_len, self.start_time, self.spades_exec)
+		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies]
+		plot_kmers = PlotKmers( spades_assembly_files,
+								self.output_directory,
+								self.threads,
+								self.kmer,
+								self.max_kmers_threshold, 
+								self.verbose, 
+								self.plot_filename)
+		plot_kmers.generate_plot()
+			
+		method_file = Methods(
+						os.path.join(self.output_directory, 'methods_summary.txt'), 
+						trait_samples, 
+						nontrait_samples, 
+						self.min_kmers_threshold, 
+						self.min_contig_len, 
+						self.start_time, 
+						self.spades_exec, 
+						self.verbose)
 		method_file.create_file()
-		self.cleanup(kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies)
+		self.cleanup(kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies, plot_kmers)
 		
-	def cleanup(self,kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies):
+	def cleanup(self,kmc_samples, kmc_fastas, kmc_complex, kmc_filters, spades_assemblies, plot_kmers):
 		if not self.verbose:
 			# Delete all sample temp directories
 			self.logger.warning("Deleting intermediate files, use --verbose if you wish to keep them")
@@ -152,4 +175,6 @@ class PlasmidTron:
 			
 			for spades_assembly in spades_assemblies:
 				spades_assembly.cleanup()
+				
+			#plot_kmers.cleanup()
 		

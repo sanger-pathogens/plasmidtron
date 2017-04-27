@@ -5,9 +5,14 @@ import logging
 from plasmidtron.SampleData import SampleData
 
 class SpreadsheetParser:
-	def __init__(self,filename):
+	def __init__(self,filename, verbose):
 		self.filename = filename
 		self.logger = logging.getLogger(__name__)
+		self.verbose = verbose
+		if self.verbose:
+			self.logger.setLevel(logging.DEBUG)
+		else:
+			self.logger.setLevel(logging.ERROR)
 	
 	def extract_samples(self):
 		samples = []

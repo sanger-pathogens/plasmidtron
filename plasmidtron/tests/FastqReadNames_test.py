@@ -5,15 +5,15 @@ from plasmidtron.FastqReadNames import FastqReadNames
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
 data_dir = os.path.join(test_modules_dir, 'data','fastqreadnames')
 
-class TestSpreadsheetParser(unittest.TestCase):
+class TestFastqReadNames(unittest.TestCase):
 	
 	def test_invalid_input_file(self):
-		i = FastqReadNames(os.path.join(data_dir, 'file_which_doesnt_exist'), 'output')
+		i = FastqReadNames(os.path.join(data_dir, 'file_which_doesnt_exist'), 'output', False)
 		with self.assertRaises(Exception):
 			i.extract_readnames_from_fastq()
 		
 	def test_valid_input_file(self):
-		f = FastqReadNames(os.path.join(data_dir, 'valid.fastq'), os.path.join(data_dir, 'output_file'))
+		f = FastqReadNames(os.path.join(data_dir, 'valid.fastq'), os.path.join(data_dir, 'output_file'), False)
 		f.extract_readnames_from_fastq()
 		
 		with open(f.output_readnames_file, 'r') as actual_file:

@@ -13,8 +13,10 @@ class SampleData:
 	     
 	def calculate_basename(self,filename):
 		basename = os.path.basename(filename)
-		basename = basename.replace('.gz','')
-		basename = basename.replace('_1.fastq','')
+		
+		for regex in ['.gz', '_1.fastq', '.fastq', '.fq', '.fasta', '.fa', '.fsa', '.fna']:
+			basename = basename.replace(regex,'')
+		
 		return basename
 		
 	def is_a_fasta(self):
