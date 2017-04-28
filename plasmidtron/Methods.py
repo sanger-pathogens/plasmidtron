@@ -3,6 +3,7 @@ import logging
 import subprocess
 import re
 import time
+import pkg_resources
 from textwrap import TextWrapper
  
 '''Produce a file with a paragraph of text and references which can easily be used in a publication'''
@@ -25,7 +26,7 @@ class Methods:
 	def plasmidtron_version(self):
 		current_version= 'X'
 		try:
-		    current_version = get_distribution('plasmidtron').version
+		    current_version = pkg_resources.get_distribution('plasmidtron').version
 		except:
 		    current_version= 'X'
 		return str(current_version)
@@ -76,7 +77,7 @@ class Methods:
 			output_fileh.write('\n\nReferences\n')
 			output_fileh.write(wrapper.fill(self.references_paragraph()))
 
-	def methods_paragraph(self, num_trait_samples, num_non_trait_samples, plasmidtron_version,kmc_version, min_kmers_threshold, spades_version, min_contig_length, running_time ):
+	def methods_paragraph(self, num_trait_samples, num_non_trait_samples, plasmidtron_version, kmc_version, min_kmers_threshold, spades_version, min_contig_length, running_time ):
 		methods_text =  'A set of '+ str(num_trait_samples) +' samples displayed a known phenotype/trait. '
 		methods_text += 'To investigate this, these samples were sequenced using Illumina to produced paired ended reads in FASTQ format. '
 		methods_text += 'These were provided to PlasmidTron (v'+ plasmidtron_version +')(Page et. al., 2017) along with '+ str(num_non_trait_samples)+' control samples which do not display the phenotype/trait. '
@@ -87,7 +88,7 @@ class Methods:
 		
 	def references_paragraph(self):
 		references_text =  'Anton Bankevich, Sergey Nurk, et. al. , and Pavel A. Pevzner. SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing. Journal of Computational Biology 19(5) (2012), 455-477. doi:10.1089/cmb.2012.0021\n'
-		references_text += 'Andrew J. Page, Alexander Wailan,Yan Shao, Martin G. Hunt, Nicholas R. Thomson, Jacqueline A. Keane, "PlasmidTron: kmer based de novo assembly of genome sequences based on phenotypes", in preparation (2017).\n'
+		references_text += 'Andrew J. Page, Alexander Wailan, Yan Shao, Martin G. Hunt, Nicholas R. Thomson, Jacqueline A. Keane, "PlasmidTron: kmer based de novo assembly of genome sequences based on phenotypes", in preparation (2017).\n'
 		references_text += 'Deorowicz, S., Kokot, M., Grabowski, Sz., Debudaj-Grabysz, A., KMC 2: Fast and resource-frugal k-mer counting, Bioinformatics, 2015; doi: 10.1093/bioinformatics/btv022.\n'
 		return references_text
 		
