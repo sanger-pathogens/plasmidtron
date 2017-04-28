@@ -39,7 +39,7 @@ class KmcVersionDetect:
 	
 	'''Return just the first number for the version which denotes the major API version'''
 	def major_version(self):
-		return self.__version_search__(1)
+		return int(self.__version_search__(1))
 	
 	'''Return the full version number x.y.z'''
 	def full_version(self):

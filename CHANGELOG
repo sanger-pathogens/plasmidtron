@@ -1,4 +1,8 @@
-v0.1.8 - 27/04/17
+v0.1.9 - 28/04/17
+------
+Bug fix to make plot kmers work with KMC 2.3.0.
+
+v0.1.8 - 28/04/17
 ------
 Allow for dashes in the filenames.
 

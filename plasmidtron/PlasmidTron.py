@@ -134,7 +134,7 @@ class PlasmidTron:
 												self.verbose)
 			final_spades_assembly.run()
 			spades_assemblies.append(final_spades_assembly)
-			print(final_spades_assembly.filtered_spades_assembly_file()+"\n")
+			print(final_spades_assembly.filtered_spades_assembly_file())
 			
 		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies]
 		plot_kmers = PlotKmers( spades_assembly_files,
