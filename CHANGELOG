@@ -1,3 +1,7 @@
+v0.1.8 - 27/04/17
+------
+Allow for dashes in the filenames.
+
 v0.1.7 - 27/04/17
 ------
 Support for using FASTA files as input.
@@ -45,4 +49,4 @@ Allow for a max number of kmers filter.
 
 v0.0.1 - 12/01/17
 ------
-Initial version
+Initial version.
