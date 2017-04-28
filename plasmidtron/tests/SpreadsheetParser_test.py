@@ -1,5 +1,6 @@
 import unittest
 import os
+import dill
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
@@ -26,7 +27,7 @@ class TestSpreadsheetParser(unittest.TestCase):
 		'''A spreadsheet with a single file should be okay'''
 		i = SpreadsheetParser(os.path.join(data_dir, 'spreadsheet_with_a_non_paired_file.csv'), False)
 		samples = i.extract_samples()
-		
+
 		self.assertEqual(len(samples),1)
 		self.assertEqual(samples[0].forward_file,'plasmidtron/tests/data/spreadsheetparser/sampleA.fasta')
 		self.assertEqual(samples[0].basename, 'sampleA')
