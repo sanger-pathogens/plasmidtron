@@ -26,7 +26,6 @@ class PlotKmers:
 		self.max_kmers_to_show = max_kmers_to_show
 		self.output_directory = output_directory
 		
-		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 		if not os.path.exists(self.output_directory):
 			os.makedirs(self.output_directory)
 		
@@ -43,11 +42,13 @@ class PlotKmers:
 			self.logger.setLevel(logging.DEBUG)
 		else:
 			self.logger.setLevel(logging.ERROR)
+		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 			
 	def output_filename(self):
 		return os.path.join(self.output_directory,self.kmer_plot_filename)
 	
 	def generate_plot(self):
+		self.logger.warning('Using KMC syntax version %s', self.kmc_major_version)
 		kmers_to_assemblies = self.get_kmers_to_assemblies()
 		kmer_matrix = self.create_matrix_for_plot(kmers_to_assemblies)
 		self.plot_kmer_matrix(kmer_matrix)
@@ -121,6 +122,7 @@ class PlotKmers:
 			command_to_run =  ' '.join(['kmc_dump', database, dump_file, self.redirect_output()])
 		else:
 			command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file, self.redirect_output()])
+		self.logger.warning('KMC dump command: %s', command_to_run)
 		subprocess.call(command_to_run, shell=True)
 		
 		kmers = []
