@@ -31,3 +31,11 @@ class TestSpreadsheetParser(unittest.TestCase):
 		self.assertEqual(samples[0].forward_file,'plasmidtron/tests/data/spreadsheetparser/sampleA.fasta')
 		self.assertEqual(samples[0].basename, 'sampleA')
 		
+	def test_spreadsheet_with_dash_in_filenames(self):
+		'''A spreadsheet with one set of files should give a single object back'''
+		i = SpreadsheetParser(os.path.join(data_dir, 'spreadsheet_with_dash_in_filenames.csv'), False)
+		samples = i.extract_samples()
+		self.assertEqual(len(samples),1)
+		self.assertEqual(samples[0].forward_file,'plasmidtron/tests/data/spreadsheetparser/sample-A_1.fastq.gz')
+		self.assertEqual(samples[0].reverse_file,'plasmidtron/tests/data/spreadsheetparser/sample-A_2.fastq.gz')
+		self.assertEqual(samples[0].basename, 'sample_A')

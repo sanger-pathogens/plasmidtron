@@ -17,6 +17,8 @@ class SampleData:
 		for regex in ['.gz', '_1.fastq', '.fastq', '.fq', '.fasta', '.fa', '.fsa', '.fna']:
 			basename = basename.replace(regex,'')
 		
+		basename = basename.replace('-','_')
+		basename = basename.replace('\W','_')
 		return basename
 		
 	def is_a_fasta(self):
