@@ -1,3 +1,7 @@
+v0.1.10 - 28/04/17
+------
+Parallelise initial database generation and filtering.
+
 v0.1.9 - 28/04/17
 ------
 Bug fix to make plot kmers work with KMC 2.3.0.
