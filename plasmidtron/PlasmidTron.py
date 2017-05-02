@@ -43,6 +43,21 @@ class PlasmidTron:
 			self.logger.setLevel(logging.ERROR)
 		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 
+	'''Python isnt good at cleaning up as it goes alone and you get memory errors very quickly with large sets.'''
+	'''This forces cleanups regularly, but its slightly less efficient.'''
+	def run_in_parallel(self, commands_to_run):
+		
+		def chunks(l, n):
+		    for i in range(0, len(l), n):
+		        yield l[i:i + n]
+		
+		num_jobs_in_slice = self.threads * 2
+		for commands in chunks(commands_to_run, num_jobs_in_slice):
+			pool = Pool(self.threads)
+			pool.map(run_command, commands)
+			pool.close()
+		return
+	
 	def generate_kmer_databases(self, trait_samples, nontrait_samples):
 		kmc_samples =[]
 		kmc_commands_to_run = []
@@ -53,9 +68,8 @@ class PlasmidTron:
 				kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
 				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
 				kmc_samples.append(kmc_sample)
-				
-		pool = Pool(self.threads)
-		pool.map(run_command, kmc_commands_to_run)
+		
+		self.run_in_parallel( kmc_commands_to_run)	
 		return kmc_samples
 		
 	def filter_data_against_kmers(self,trait_samples, result_database):
@@ -71,15 +85,14 @@ class PlasmidTron:
 			
 		kmc_filter_commands = [ k.kmc_filter_command() for k in kmc_filters ]
 		
-		pool = Pool(self.threads)
-		pool.map(run_command, kmc_filter_commands)
+		self.run_in_parallel(kmc_filter_commands)
 		
 		# Convert to parallel
 		for k in kmc_filters:
 			k.extract_read_names_from_fastq()
 		
 		kmc_fastaq_commands = [ k.filtered_fastaq_command() for k in kmc_filters ]
-		pool.map(run_command, kmc_fastaq_commands)
+		self.run_in_parallel(kmc_fastaq_commands)
 		
 		return kmc_filters
 
