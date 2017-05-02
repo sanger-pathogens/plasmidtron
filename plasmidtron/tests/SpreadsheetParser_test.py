@@ -1,6 +1,5 @@
 import unittest
 import os
-import dill
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
 
 test_modules_dir = os.path.dirname(os.path.realpath(__file__))
