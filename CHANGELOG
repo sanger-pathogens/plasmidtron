@@ -1,5 +1,9 @@
 v0.1.11 - 02/05/17
 ------
+FASTA files should always have a kmer filter of 1.
+
+v0.1.11 - 02/05/17
+------
 Bug fix for memory leak in when using multiple processes.
 
 v0.1.10 - 28/04/17
