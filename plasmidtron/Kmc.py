@@ -53,7 +53,7 @@ class Kmc:
 		
 		command_to_run =  " ".join(['kmc', 
 			'-t' +  str(self.threads), 
-			'-ci' + str(self.min_kmers_threshold),
+			'-ci' + str(self.min_kmers_value()),
 			'-cx' + str(self.max_kmers_threshold),
 			'-k' + str(self.kmer),
 			self.file_type_option(),
@@ -66,6 +66,12 @@ class Kmc:
 		self.logger.warning("Running: "+command_to_run )
 		return command_to_run
 		
+	def min_kmers_value(self):
+		if self.sample.is_a_fasta():
+			return 1
+		else:
+			return self.min_kmers_threshold
+	
 	'''A FASTA file needs a different option for KMC'''
 	def file_type_option(self):
 		if self.sample.is_a_fasta():
