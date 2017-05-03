@@ -1,6 +1,10 @@
+v0.2.0 - 03/05/17
+------
+Use GNU parallel.
+
 v0.1.13 - 03/05/17
 ------
-Abandon multiprocessing due to memory errors
+Abandon multiprocessing due to memory errors.
 
 v0.1.12 - 02/05/17
 ------
