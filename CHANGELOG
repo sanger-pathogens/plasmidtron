@@ -1,4 +1,8 @@
-v0.1.11 - 02/05/17
+v0.1.13 - 03/05/17
+------
+Abandon multiprocessing due to memory errors
+
+v0.1.12 - 02/05/17
 ------
 FASTA files should always have a kmer filter of 1.
 
