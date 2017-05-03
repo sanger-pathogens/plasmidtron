@@ -3,7 +3,6 @@ import os
 import logging
 import subprocess
 import time
-from multiprocessing import Pool
 from plasmidtron.Kmc import Kmc
 from plasmidtron.KmcComplex import KmcComplex
 from plasmidtron.KmcFasta import KmcFasta
@@ -43,19 +42,9 @@ class PlasmidTron:
 			self.logger.setLevel(logging.ERROR)
 		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
 
-	'''Python isnt good at cleaning up as it goes alone and you get memory errors very quickly with large sets.'''
-	'''This forces cleanups regularly, but its slightly less efficient.'''
-	def run_in_parallel(self, commands_to_run):
-		
-		def chunks(l, n):
-		    for i in range(0, len(l), n):
-		        yield l[i:i + n]
-		
-		num_jobs_in_slice = self.threads * 2
-		for commands in chunks(commands_to_run, num_jobs_in_slice):
-			pool = Pool(self.threads)
-			pool.map(run_command, commands)
-			pool.close()
+	def run_list_of_commands(self, commands_to_run):
+		for c in commands_to_run:
+			run_command(c)
 		return
 	
 	def generate_kmer_databases(self, trait_samples, nontrait_samples):
@@ -64,12 +53,12 @@ class PlasmidTron:
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				self.logger.warning('Generating a kmer database for sample %s', sample.basename)
-				kmc_sample = Kmc(self.output_directory, sample, 1, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
+				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
 				kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
 				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
 				kmc_samples.append(kmc_sample)
 		
-		self.run_in_parallel( kmc_commands_to_run)	
+		self.run_list_of_commands( kmc_commands_to_run)	
 		return kmc_samples
 		
 	def filter_data_against_kmers(self,trait_samples, result_database):
@@ -80,19 +69,19 @@ class PlasmidTron:
 				continue
 				
 			self.logger.warning('Filtering reads which contain trait kmers %s', sample.basename)
-			kmc_filter = KmcFilter(sample, self.output_directory, 1,result_database, self.verbose)
+			kmc_filter = KmcFilter(sample, self.output_directory, self.threads, result_database, self.verbose)
 			kmc_filters.append(kmc_filter)
 			
 		kmc_filter_commands = [ k.kmc_filter_command() for k in kmc_filters ]
 		
-		self.run_in_parallel(kmc_filter_commands)
+		self.run_list_of_commands(kmc_filter_commands)
 		
 		# Convert to parallel
 		for k in kmc_filters:
 			k.extract_read_names_from_fastq()
 		
 		kmc_fastaq_commands = [ k.filtered_fastaq_command() for k in kmc_filters ]
-		self.run_in_parallel(kmc_fastaq_commands)
+		self.run_list_of_commands(kmc_fastaq_commands)
 		
 		return kmc_filters
 
