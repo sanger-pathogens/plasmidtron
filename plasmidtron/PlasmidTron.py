@@ -3,6 +3,8 @@ import os
 import logging
 import subprocess
 import time
+import shutil
+import tempfile
 from plasmidtron.Kmc import Kmc
 from plasmidtron.KmcComplex import KmcComplex
 from plasmidtron.KmcFasta import KmcFasta
@@ -13,9 +15,7 @@ from plasmidtron.SpadesAssembly import SpadesAssembly
 from plasmidtron.SpreadsheetParser import SpreadsheetParser
 from plasmidtron.PlotKmers import PlotKmers
 from plasmidtron.KmcVersionDetect import KmcVersionDetect
-
-def run_command(cmd):
-	return subprocess.call(cmd,shell=True)
+from plasmidtron.CommandRunner import CommandRunner
 
 class PlasmidTron:
 	def __init__(self,options):
@@ -41,12 +41,8 @@ class PlasmidTron:
 		else:
 			self.logger.setLevel(logging.ERROR)
 		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
+		self.command_runner = CommandRunner( self.output_directory, self.logger, self.threads )
 
-	def run_list_of_commands(self, commands_to_run):
-		for c in commands_to_run:
-			run_command(c)
-		return
-	
 	def generate_kmer_databases(self, trait_samples, nontrait_samples):
 		kmc_samples =[]
 		kmc_commands_to_run = []
@@ -58,7 +54,7 @@ class PlasmidTron:
 				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
 				kmc_samples.append(kmc_sample)
 		
-		self.run_list_of_commands( kmc_commands_to_run)	
+		self.command_runner.run_list_of_commands( kmc_commands_to_run)	
 		return kmc_samples
 		
 	def filter_data_against_kmers(self,trait_samples, result_database):
@@ -74,14 +70,14 @@ class PlasmidTron:
 			
 		kmc_filter_commands = [ k.kmc_filter_command() for k in kmc_filters ]
 		
-		self.run_list_of_commands(kmc_filter_commands)
+		self.command_runner.run_list_of_commands( kmc_filter_commands)
 		
 		# Convert to parallel
 		for k in kmc_filters:
 			k.extract_read_names_from_fastq()
 		
 		kmc_fastaq_commands = [ k.filtered_fastaq_command() for k in kmc_filters ]
-		self.run_list_of_commands(kmc_fastaq_commands)
+		self.command_runner.run_list_of_commands( kmc_fastaq_commands)
 		
 		return kmc_filters
 

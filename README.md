@@ -130,7 +130,7 @@ The instructions for Linux assume you have root (sudo) on your machine.
 
 ```
 apt-get update -qq
-apt-get install -y kmc git python3 python3-setuptools python3-biopython python3-pip
+apt-get install -y kmc git python3 python3-setuptools python3-biopython python3-pip parallel
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
 ```
 
@@ -139,7 +139,7 @@ You can either manually install [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?
 
 ```
 apt-get update -qq
-apt-get install -y wget git python3 python3-setuptools python3-biopython python3-pip
+apt-get install -y wget git python3 python3-setuptools python3-biopython python3-pip parallel
 wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
 source ./install_dependancies.sh
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
@@ -151,7 +151,7 @@ Once you have done this you can proceed with the instructions below. You can eit
 
 ```
 apt-get update -qq
-apt-get install -y git wget
+apt-get install -y git wget parallel
 wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
 source ./install_dependancies.sh
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
@@ -163,7 +163,7 @@ These instructions are untested. First install [LinuxBrew](http://linuxbrew.sh/)
 ```
 brew tap homebrew/science
 brew update
-brew install python3 kmc spades
+brew install python3 kmc spades parallel
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
 ```
 
@@ -174,7 +174,7 @@ These instructions are untested. First install [HomeBrew](http://brew.sh/), then
 ```
 brew tap homebrew/science
 brew update
-brew install python3 kmc spades
+brew install python3 kmc spades parallel
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
 ```
 
@@ -190,3 +190,10 @@ To use it you would use a command such as this (substituting in your directories
 ```
 docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
 ```
+
+
+# Additional software to cite
+If you use multi-threading you are kindly requested to cite GNU parallel:
+
+O. Tange (2011): GNU Parallel - The Command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.
+
