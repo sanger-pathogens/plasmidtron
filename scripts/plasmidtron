@@ -9,6 +9,9 @@ sys.path.append('./')
 from plasmidtron.PlasmidTron import PlasmidTron
 from plasmidtron.InputTypes import InputTypes
 
+from multiprocessing import set_start_method
+set_start_method('forkserver')
+
 version = ''
 try:
 	version = pkg_resources.get_distribution("plasmidtron").version
