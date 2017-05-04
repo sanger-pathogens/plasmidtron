@@ -1,3 +1,7 @@
+v0.2.2 - 04/05/17
+------
+Fix y axes in kmer plot.
+
 v0.2.1 - 04/05/17
 ------
 Extend parallelism to other parts of the method.

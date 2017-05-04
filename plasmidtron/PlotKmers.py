@@ -7,11 +7,14 @@ import csv
 import math
 import sys
 from collections import OrderedDict
+
 import matplotlib
 # Remove the need for a DISPLAY
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.axes_divider import make_axes_area_auto_adjustable
 import numpy
+
 from plasmidtron.KmcFasta import KmcFasta
 from plasmidtron.KmcVersionDetect import KmcVersionDetect
 from plasmidtron.CommandRunner import CommandRunner
@@ -121,6 +124,7 @@ class PlotKmers:
         
 		ax.set_yticks(range(len(base_sample_names)))
 		ax.set_yticklabels(base_sample_names)
+		make_axes_area_auto_adjustable(ax)
 		plt.savefig(self.output_filename())
 
 	def get_kmers_from_db(self,database):
