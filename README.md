@@ -191,6 +191,10 @@ To use it you would use a command such as this (substituting in your directories
 docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
 ```
 
+# FAQ
+## terminate called after throwing an instance of 'std::bad_alloc'
+KMC can cause an error if there are too many threads running at once for the underlying system to cope with. A non-blocking socket buffer fills up and the command fails. The only solution (without modifying KMC) is to reduce the number of threads. 
+
 
 # Additional software to cite
 If you use multi-threading you are kindly requested to cite GNU parallel:
