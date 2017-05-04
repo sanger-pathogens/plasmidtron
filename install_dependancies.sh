@@ -59,8 +59,8 @@ spades_dir="$build_dir/SPAdes-${SPADES_VERSION}-Linux"
 cd $spades_dir
 
 # --------------- parallel ------------------
-PARALLEL_BUILD_DIR="parallel-${PARALLEL_VERSION}"
 cd $build_dir
+PARALLEL_BUILD_DIR="${build_dir}/parallel-${PARALLEL_VERSION}"
 download $PARALLEL_URL $PARALLEL_DOWNLOAD_FILENAME
 tar xjvf $PARALLEL_DOWNLOAD_FILENAME
 cd $PARALLEL_BUILD_DIR
