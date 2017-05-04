@@ -49,7 +49,7 @@ class PlasmidTron:
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				self.logger.warning('Generating a kmer database for sample %s', sample.basename)
-				kmc_sample = Kmc(self.output_directory, sample, self.threads, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
+				kmc_sample = Kmc(self.output_directory, sample, 1, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
 				kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
 				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
 				kmc_samples.append(kmc_sample)
@@ -65,7 +65,7 @@ class PlasmidTron:
 				continue
 				
 			self.logger.warning('Filtering reads which contain trait kmers %s', sample.basename)
-			kmc_filter = KmcFilter(sample, self.output_directory, self.threads, result_database, self.verbose)
+			kmc_filter = KmcFilter(sample, self.output_directory, 1, result_database, self.verbose)
 			kmc_filters.append(kmc_filter)
 			
 		kmc_filter_commands = [ k.kmc_filter_command() for k in kmc_filters ]
@@ -82,7 +82,9 @@ class PlasmidTron:
 		return kmc_filters
 
 	def assemble_samples(self,trait_samples,keep_files):
-		spades_assemblies = []
+		spades_first_assemblies = []
+		spades_commands = []
+
 		for sample in trait_samples:
 			if sample.is_a_fasta():
 				self.logger.warning('Not assembling sample %s', sample.basename)
@@ -91,7 +93,7 @@ class PlasmidTron:
 			self.logger.warning('First assembly with reads only matching kmers %s', sample.basename)
 			spades_assembly = SpadesAssembly(	sample, 
 												self.output_directory, 
-												self.threads, 
+												1, 
 												self.kmer, 
 												self.spades_exec, 
 												self.min_contig_len,
@@ -99,8 +101,18 @@ class PlasmidTron:
 												self.min_spades_contig_coverage,
 												False,
 												self.verbose)
-			spades_assembly.run()
+			spades_commands.append(spades_assembly.spades_command())
+			spades_first_assemblies.append(spades_assembly)
 			
+		self.command_runner.run_list_of_commands(spades_commands)
+		
+		kmc_fastas = []
+		kmc_fasta_commands = []
+		self.logger.warning('Extract the kmers from the first assembly')
+		for spades_assembly in spades_first_assemblies:
+			sample = spades_assembly.sample
+			spades_assembly.remove_small_contigs(spades_assembly.spades_assembly_file(), spades_assembly.filtered_spades_assembly_file())
+		
 			if os.path.getsize(spades_assembly.filtered_spades_assembly_file()) <= self.min_contig_len:
 				self.logger.warning('Not enough data in the 1st assembly after filtering, skipping the rest of the steps %s', sample.basename)
 				continue
@@ -111,30 +123,58 @@ class PlasmidTron:
 			self.logger.warning('Extract kmers from assembly %s', sample.basename)
 			kmc_fasta = KmcFasta(	self.output_directory, 
 									spades_assembly.filtered_spades_assembly_file(), 
-									self.threads, 
+									1, 
 									self.kmer,
 									1, 
 									self.max_kmers_threshold,
 									self.verbose)
-			kmc_fasta.run()
+			kmc_fasta.sample = sample			
+			kmc_fastas.append(kmc_fasta)
+			kmc_fasta_commands.append(kmc_fasta.kmc_command())
+			
+		self.command_runner.run_list_of_commands(kmc_fasta_commands)	
+			
+		for spades_assembly in spades_first_assemblies:	
+			if not self.keep_files:
+				spades_assembly.cleanup()
+		
+		kmc_filters = []
+		kmc_filter_commands = []
+		filtered_fastaq_commands = []
+		self.logger.warning('Filter the reads against the kmers from the 1st assembly')
+		for kmc_fasta in kmc_fastas:
+			sample = kmc_fasta.sample
 			
 			# Pull out any reads matching the kmers found in the assembly
 			self.logger.warning('Pull out reads from original FASTQ files matching assembly kmers %s', sample.basename)
 			kmc_filter = KmcFilter(	sample, 
 									self.output_directory, 
-									self.threads, 
+									1, 
 									kmc_fasta.output_database_name(),
 									self.verbose)
-			kmc_filter.filter_fastq_file_against_kmers()
+			#kmc_filter.filter_fastq_file_against_kmers()
+			kmc_filters.append(kmc_filter)
+			kmc_filter_commands.append(kmc_filter.kmc_filter_command())
+			filtered_fastaq_commands.append(kmc_filter.filtered_fastaq_command())
 		
+		self.command_runner.run_list_of_commands(kmc_filter_commands)	
+		for k in kmc_filters:
+			k.extract_read_names_from_fastq()
+		self.command_runner.run_list_of_commands(filtered_fastaq_commands)	
+
+		for kmc_fasta in kmc_fastas:
 			if not self.keep_files:
-				spades_assembly.cleanup()
 				kmc_fasta.cleanup()
-				
+		
+		spades_assemblies = []	
+		final_spades_commands = []
+		self.logger.warning('Reassemble all filtered reads with SPAdes')
+		for kmc_filter in kmc_filters:
+			sample = kmc_filter.sample
 			self.logger.warning('Reassemble with SPAdes %s', sample.basename)
 			final_spades_assembly = SpadesAssembly(	sample, 
 												self.output_directory, 
-												self.threads, 
+												1, 
 												self.kmer, 
 												self.spades_exec, 
 												self.min_contig_len,
@@ -142,15 +182,29 @@ class PlasmidTron:
 												self.min_spades_contig_coverage,
 												True,
 												self.verbose)
-			final_spades_assembly.run()
 			spades_assemblies.append(final_spades_assembly)
-			print(final_spades_assembly.filtered_spades_assembly_file())
+			final_spades_commands.append(final_spades_assembly.spades_command())
+			
+		self.command_runner.run_list_of_commands(final_spades_commands)
+			
+		self.logger.warning('Cleanup kmc filter output')
+		for kmc_filter in kmc_filters:
+			if not self.keep_files:
+				kmc_filter.cleanup()
+			
+		self.logger.warning('Cleanup final spades output')
+		for final_spades_assembly in spades_assemblies:
+			final_spades_assembly.remove_small_contigs(final_spades_assembly.spades_assembly_file(), final_spades_assembly.filtered_spades_assembly_file())
+			
+			if os.path.exists(final_spades_assembly.filtered_spades_assembly_file()):
+				print(final_spades_assembly.filtered_spades_assembly_file())
+			else:
+				self.logger.error('Final SPAdes output doesnt exist %s', final_spades_assembly.filtered_spades_assembly_file())
 			
 			if not self.keep_files:
 				final_spades_assembly.cleanup()
-				kmc_filter.cleanup()
-			
-			return spades_assemblies
+
+		return spades_assemblies
 			
 	def run(self):
 		self.logger.warning('Using KMC syntax version %s', self.kmc_major_version)

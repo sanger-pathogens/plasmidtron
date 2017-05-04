@@ -15,6 +15,7 @@ class KmcFasta:
 		self.min_kmers_threshold = min_kmers_threshold
 		self.max_kmers_threshold = max_kmers_threshold
 		self.temp_working_dir = tempfile.mkdtemp(dir=os.path.abspath(output_directory))
+		self.sample = None
 		
 		self.verbose = verbose
 		if self.verbose:
