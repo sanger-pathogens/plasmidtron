@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy
 from plasmidtron.KmcFasta import KmcFasta
 from plasmidtron.KmcVersionDetect import KmcVersionDetect
+from plasmidtron.CommandRunner import CommandRunner
  
 '''Given a list of assembly files in FASTA format, output a kmer presence/absense plot'''
 class PlotKmers:
@@ -43,6 +44,8 @@ class PlotKmers:
 		else:
 			self.logger.setLevel(logging.ERROR)
 		self.kmc_major_version = KmcVersionDetect(self.verbose).major_version()
+		self.command_runner = CommandRunner( self.output_directory, self.logger, self.threads )
+		
 			
 	def output_filename(self):
 		return os.path.join(self.output_directory,self.kmer_plot_filename)
@@ -58,20 +61,27 @@ class PlotKmers:
 		self.logger.warning('Extract kmers from assemblies')
 		kmers_to_assemblies = OrderedDict()
 		# get kmers for each assembly
+		kmc_fastas = []
+		kmc_fasta_commands = []
 		for assembly in self.assemblies:
 			self.logger.warning('Finding kmers for assembly %s', assembly)
 			kmc_fasta = KmcFasta(self.output_directory, 
 								assembly, 
-								self.threads, 
+								1, 
 								self.kmer,
 								1, 
 								self.max_kmers_threshold,
-								self.verbose)			
-			kmc_fasta.run()
+								self.verbose)						
+			kmc_fastas.append(kmc_fasta)
+			kmc_fasta_commands.append(kmc_fasta.kmc_command())
+			
+		self.command_runner.run_list_of_commands( kmc_fasta_commands )		
+			
+		for kmc_fasta in kmc_fastas:
 			kmers_for_assembly = self.get_kmers_from_db(kmc_fasta.output_database_name())
 			kmc_fasta.cleanup()
 			
-			assembly_idx = self.assembly_index[assembly]
+			assembly_idx = self.assembly_index[kmc_fasta.input_filename]
 			# read in kmers to ordered hash
 			self.logger.warning('read in kmers to ordered dict')
 			for kmer in kmers_for_assembly:
