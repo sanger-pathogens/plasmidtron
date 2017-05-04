@@ -81,6 +81,4 @@ update_path "${spades_dir}/bin"
 update_path "${PARALLEL_BUILD_DIR}/src"
 
 pip install pyfastaq biopython matplotlib
-# silence the citation message
-parallel --citation
 
