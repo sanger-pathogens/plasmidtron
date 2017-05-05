@@ -111,6 +111,10 @@ class PlasmidTron:
 		self.logger.warning('Extract the kmers from the first assembly')
 		for spades_assembly in spades_first_assemblies:
 			sample = spades_assembly.sample
+			
+			if not os.path.exists(spades_assembly.spades_assembly_file()):
+				continue
+			
 			spades_assembly.remove_small_contigs(spades_assembly.spades_assembly_file(), spades_assembly.filtered_spades_assembly_file())
 		
 			if os.path.getsize(spades_assembly.filtered_spades_assembly_file()) <= self.min_contig_len:
@@ -194,6 +198,9 @@ class PlasmidTron:
 			
 		self.logger.warning('Cleanup final spades output')
 		for final_spades_assembly in spades_assemblies:
+			if not os.path.exists(final_spades_assembly.spades_assembly_file()):
+				continue
+			
 			final_spades_assembly.remove_small_contigs(final_spades_assembly.spades_assembly_file(), final_spades_assembly.filtered_spades_assembly_file())
 			
 			if os.path.exists(final_spades_assembly.filtered_spades_assembly_file()):
@@ -224,7 +231,7 @@ class PlasmidTron:
 		self.logger.warning('Assembling all of the trait samples')
 		spades_assemblies = self.assemble_samples(trait_samples, self.keep_files)
 	
-		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies]
+		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies if os.path.exists(s.filtered_spades_assembly_file())]
 		plot_kmers = PlotKmers( spades_assembly_files,
 								self.output_directory,
 								self.threads,

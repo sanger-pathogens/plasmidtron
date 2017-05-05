@@ -46,7 +46,7 @@ class SpadesAssembly:
 		if self.assemble_with_careful :
 			careful_flag = '--careful'
 			
-		return ' '.join([self.spades_exec, careful_flag, '--only-assembler','-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory(), redirect_output ])
+		return ' '.join([self.spades_exec, careful_flag, '--only-assembler','-t', str(self.threads), '-k', str(self.kmer), '-1', self.sample.filtered_forward_file, '-2', self.sample.filtered_reverse_file, '-o', self.spades_output_directory(), redirect_output ])
 
 	def spades_assembly_file(self):
 		return os.path.join(self.spades_output_directory(), 'scaffolds.fasta')
