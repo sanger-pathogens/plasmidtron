@@ -32,7 +32,7 @@ class InputTypes:
 		raise argparse.ArgumentTypeError("Invalid Kmer value, it must be an odd integer between 21 and 127")
 		
 	def is_min_kmers_per_read(value_str):
-		if value_str.isdigit():
+		if value_str.isdecimal():
 			min_kmers = float(value_str)
 			if min_kmers > 0 and min_kmers < 1:
 				return min_kmers
