@@ -39,7 +39,7 @@ class KmcFilter:
 		return redirect_output_str
 	
 	def kmc_filter_command(self):
-		return ' '.join(['kmc_tools', '-t'+str(self.threads), 'filter', self.result_database, '@'+self.sample.file_of_fastq_files, self.intermediate_filtered_fastq, self.redirect_output()])
+		return ' '.join(['kmc_tools', 'filter', self.result_database, '@'+self.sample.file_of_fastq_files, self.intermediate_filtered_fastq, self.redirect_output()])
 		
 	def filtered_fastaq_command(self):
 		return ' '.join(['fastaq', 'filter', '--ids_file', self.read_names_file, '--mate_in', self.sample.reverse_file, ' --mate_out', self.sample.filtered_reverse_file, self.sample.forward_file, self.sample.filtered_forward_file, self.redirect_output() ])

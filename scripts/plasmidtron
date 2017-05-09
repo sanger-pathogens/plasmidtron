@@ -25,7 +25,7 @@ parser.add_argument('--action',	 '-a', help='Control how the traits kmers are fi
 parser.add_argument('--keep_files', '-f', action='store_true', help='Keep intermediate files [%(default)s]')
 parser.add_argument('--kmer',	 '-k', help='Kmer to use, depends on read length [%(default)s]', type=InputTypes.is_kmer_valid, default = 51)
 parser.add_argument('--min_contig_len',	 '-l', help='Minimum contig length in final assembly [%(default)s]', type=InputTypes.is_min_contig_len_valid, default = 3000)
-parser.add_argument('--min_spades_contig_coverage',	 '-c', help='Filter out contigs with low coverage. Set to 0 to keep all. [%(default)s]', type=InputTypes.is_min_spades_contig_coverage_valid, default = 30)
+parser.add_argument('--min_spades_contig_coverage',	 '-c', help='Filter out contigs with low coverage. Set to 0 to keep all. [%(default)s]', type=InputTypes.is_min_spades_contig_coverage_valid, default = 15)
 parser.add_argument('--min_kmers_threshold',	 '-m', help='Exclude k-mers occurring less than this [%(default)s]', type=InputTypes.is_min_kmers_threshold_valid, default = 30)
 parser.add_argument('--max_kmers_threshold',	 '-x', help='Exclude k-mers occurring more than this [%(default)s]', type=InputTypes.is_max_kmers_threshold_valid, default = 254)
 parser.add_argument('--plot_filename', '-p', help='Kmer to use, depends on read length [%(default)s]', default = 'kmerplot.png')

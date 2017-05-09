@@ -19,12 +19,21 @@ class TestFastqReadNames(unittest.TestCase):
 		with open(f.output_readnames_file, 'r') as actual_file:
 			actual_config_content = actual_file.read()
 			self.assertEqual(actual_config_content, """\
-IL9_4021:8:1:8:1892#7/1
 IL9_4021:8:1:8:1892#7/2
-IL9_4021:8:1:9:1658#7/1
 IL9_4021:8:1:9:1658#7/2
-IL9_4021:8:1:9:1626#7/1
 IL9_4021:8:1:9:1626#7/2
 """)
 		os.remove(os.path.join(data_dir, 'output_file'))
 		
+		
+	def test_single_hits_filtered_out(self):
+		f = FastqReadNames(os.path.join(data_dir, 'valid_single_hits.fastq'), os.path.join(data_dir, 'output_file'), False)
+		f.extract_readnames_from_fastq()
+		
+		
+		with open(f.output_readnames_file, 'r') as actual_file:
+			actual_config_content = actual_file.read()
+			self.assertEqual(actual_config_content, """\
+paired_hit/2
+""")
+		os.remove(os.path.join(data_dir, 'output_file'))

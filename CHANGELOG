@@ -1,3 +1,7 @@
+v0.3.0 - 09/05/17
+------
+Require forward and reverse reads to contain a trait kmer.
+
 v0.2.3 - 05/05/17
 ------
 Check spades assembly was successful.
