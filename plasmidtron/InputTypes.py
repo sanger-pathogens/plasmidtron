@@ -31,6 +31,13 @@ class InputTypes:
 				return kmer
 		raise argparse.ArgumentTypeError("Invalid Kmer value, it must be an odd integer between 21 and 127")
 		
+	def is_min_kmers_per_read(value_str):
+		if value_str.isdigit():
+			min_kmers = float(value_str)
+			if min_kmers > 0 and min_kmers < 1:
+				return min_kmers
+		raise argparse.ArgumentTypeError("Invalid min percentage kmer coverage, must be between 0 and 1")
+		
 	def is_min_contig_len_valid(value_str):
 		if value_str.isdigit():
 			min_contig_len = int(value_str)

@@ -7,12 +7,13 @@ from plasmidtron.FastqReadNames import FastqReadNames
  
 '''Given a kmer database extract filter a FASTQ file for a sample'''
 class KmcFilter:
-	def __init__(self,sample, output_directory, threads,result_database, verbose):
+	def __init__(self,sample, output_directory, threads,result_database, verbose, min_kmers_per_read):
 		self.logger = logging.getLogger(__name__)
 		self.verbose = verbose
 		self.sample = sample
 		self.threads = threads
 		self.result_database = result_database
+		self.min_kmers_per_read = min_kmers_per_read
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 		self.store_intermediate_files()
 		
@@ -39,7 +40,7 @@ class KmcFilter:
 		return redirect_output_str
 	
 	def kmc_filter_command(self):
-		return ' '.join(['kmc_tools', 'filter', self.result_database, '@'+self.sample.file_of_fastq_files, self.intermediate_filtered_fastq, self.redirect_output()])
+		return ' '.join(['kmc_tools', 'filter', self.result_database, '@'+self.sample.file_of_fastq_files, '-ci'+str(self.min_kmers_per_read), self.intermediate_filtered_fastq, self.redirect_output()])
 		
 	def filtered_fastaq_command(self):
 		return ' '.join(['fastaq', 'filter', '--ids_file', self.read_names_file, '--mate_in', self.sample.reverse_file, ' --mate_out', self.sample.filtered_reverse_file, self.sample.forward_file, self.sample.filtered_forward_file, self.redirect_output() ])

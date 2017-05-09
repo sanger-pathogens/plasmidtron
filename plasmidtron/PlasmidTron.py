@@ -35,6 +35,7 @@ class PlasmidTron:
 		self.min_spades_contig_coverage = options.min_spades_contig_coverage
 		self.keep_files                 = options.keep_files
 		self.plot_filename              = options.plot_filename
+		self.min_kmers_per_read         = options.min_kmers_per_read
 		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
@@ -65,7 +66,7 @@ class PlasmidTron:
 				continue
 				
 			self.logger.warning('Filtering reads which contain trait kmers %s', sample.basename)
-			kmc_filter = KmcFilter(sample, self.output_directory, 1, result_database, self.verbose)
+			kmc_filter = KmcFilter(sample, self.output_directory, 1, result_database, self.verbose, self.min_kmers_per_read)
 			kmc_filters.append(kmc_filter)
 			
 		kmc_filter_commands = [ k.kmc_filter_command() for k in kmc_filters ]
@@ -155,8 +156,9 @@ class PlasmidTron:
 									self.output_directory, 
 									1, 
 									kmc_fasta.output_database_name(),
-									self.verbose)
-			#kmc_filter.filter_fastq_file_against_kmers()
+									self.verbose,
+									self.min_kmers_per_read
+									)
 			kmc_filters.append(kmc_filter)
 			kmc_filter_commands.append(kmc_filter.kmc_filter_command())
 			filtered_fastaq_commands.append(kmc_filter.filtered_fastaq_command())

@@ -41,13 +41,13 @@ class KmcComplex:
 		
 	def create_config_files(self):
 		traits_config_file = os.path.join(self.temp_working_dir, 'traits_config_file')
-		self.write_config_file(traits_config_file, self.sample_definitions_str(), self.trait_samples_to_set_operation_str(),  self.output_parameters_str())
+		self.write_config_file(traits_config_file, self.sample_definitions_str(), self.trait_samples_to_set_operation_str(),  self.output_parameters_str(True))
 		
 		nontraits_config_file = os.path.join(self.temp_working_dir, 'nontraits_config_file')
-		self.write_config_file(nontraits_config_file, self.sample_definitions_str(), self.nontrait_samples_to_set_operation_str(),  self.output_parameters_str())
+		self.write_config_file(nontraits_config_file, self.sample_definitions_str(), self.nontrait_samples_to_set_operation_str(),  self.output_parameters_str(False))
 		
 		combined_config_file = os.path.join(self.temp_working_dir, 'combined_config_file')
-		self.write_config_file(combined_config_file, 'set1 = traits\nset2 = nontraits\n', 'result = set1-set2',  self.output_parameters_str())
+		self.write_config_file(combined_config_file, 'set1 = traits\nset2 = nontraits\n', 'result = set1-set2',  self.output_parameters_str(True))
 
 	def sample_definitions_str(self):
 		sample_definition_lines = ''
@@ -60,8 +60,11 @@ class KmcComplex:
 	def result_database(self):
 		return os.path.join(self.temp_working_dir, 'result')
 
-	def output_parameters_str(self):
-		return ' '.join(['-ci'+str(self.min_kmers_threshold)])
+	def output_parameters_str(self, apply_min_threshold):
+		if apply_min_threshold:
+			return ' '.join(['-ci'+str(self.min_kmers_threshold)])
+		else:
+			return ' '.join(['-ci'+str(1)])
 
 	def trait_samples_to_set_operation_str(self):
 		trait_basenames = []
