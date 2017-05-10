@@ -51,12 +51,12 @@ class PlasmidTron:
 		for set_of_samples in [trait_samples, nontrait_samples]:
 			for sample in set_of_samples:
 				self.logger.warning('Generating a kmer database for sample %s', sample.basename)
-				kmc_sample = Kmc(self.output_directory, sample, 1, self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
+				kmc_sample = Kmc(self.output_directory, sample, self.command_runner.kmc_threads(), self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
 				kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
 				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
 				kmc_samples.append(kmc_sample)
 		
-		self.command_runner.run_list_of_commands( kmc_commands_to_run)	
+		self.command_runner.run_list_of_kmc_commands( kmc_commands_to_run)	
 		return kmc_samples
 		
 	def filter_data_against_kmers(self,trait_samples, result_database):
@@ -129,7 +129,7 @@ class PlasmidTron:
 			self.logger.warning('Extract kmers from assembly %s', sample.basename)
 			kmc_fasta = KmcFasta(	self.output_directory, 
 									spades_assembly.filtered_spades_assembly_file(), 
-									1, 
+									self.command_runner.kmc_threads(), 
 									self.kmer,
 									1, 
 									self.max_kmers_threshold,
@@ -138,7 +138,7 @@ class PlasmidTron:
 			kmc_fastas.append(kmc_fasta)
 			kmc_fasta_commands.append(kmc_fasta.kmc_command())
 			
-		self.command_runner.run_list_of_commands(kmc_fasta_commands)	
+		self.command_runner.run_list_of_kmc_commands(kmc_fasta_commands)	
 			
 		for spades_assembly in spades_first_assemblies:	
 			if not self.keep_files:

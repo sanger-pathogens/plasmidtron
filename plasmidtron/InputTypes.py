@@ -54,9 +54,9 @@ class InputTypes:
 	def is_threads_valid(value_str):
 		if value_str.isdigit():
 			threads = int(value_str)
-			if  threads > 0 and threads <= 512:
+			if  threads > 0 and threads <= 32:
 				return threads
-		raise argparse.ArgumentTypeError("Invalid number of threads, it must at least 1 and less than the No. of CPUs")
+		raise argparse.ArgumentTypeError("Invalid number of threads, it must at least 1 and less than 32.")
 		
 	def is_max_kmers_threshold_valid(value_str):
 		if value_str.isdigit():
