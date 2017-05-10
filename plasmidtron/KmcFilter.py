@@ -7,13 +7,14 @@ from plasmidtron.FastqReadNames import FastqReadNames
  
 '''Given a kmer database extract filter a FASTQ file for a sample'''
 class KmcFilter:
-	def __init__(self,sample, output_directory, threads,result_database, verbose, min_kmers_per_read):
+	def __init__(self,sample, output_directory, threads,result_database, verbose, min_kmers_per_read, match_both_pairs):
 		self.logger = logging.getLogger(__name__)
 		self.verbose = verbose
 		self.sample = sample
 		self.threads = threads
 		self.result_database = result_database
 		self.min_kmers_per_read = min_kmers_per_read
+		self.match_both_pairs = match_both_pairs
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 		self.store_intermediate_files()
 		
@@ -47,7 +48,7 @@ class KmcFilter:
 	
 	def extract_read_names_from_fastq(self):
 		# The FASTQ file that comes out of kmc doesnt output all pairs, so we have to refilter it to get all mates.
-		fastq_read_names = FastqReadNames(self.intermediate_filtered_fastq, self.read_names_file, self.verbose)
+		fastq_read_names = FastqReadNames(self.intermediate_filtered_fastq, self.read_names_file, self.verbose, self.match_both_pairs)
 		fastq_read_names.extract_readnames_from_fastq()
 	
 	def filter_fastq_file_against_kmers(self):

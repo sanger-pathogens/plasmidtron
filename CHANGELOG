@@ -1,3 +1,7 @@
+v0.3.1 - 10/05/17
+------
+Allow user to choose if both reads need to be present to filter them.
+
 v0.3.0 - 09/05/17
 ------
 Require forward and reverse reads to contain a trait kmer.
