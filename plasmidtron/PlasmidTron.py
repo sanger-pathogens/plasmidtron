@@ -37,6 +37,7 @@ class PlasmidTron:
 		self.plot_filename              = options.plot_filename
 		self.min_kmers_per_read         = options.min_kmers_per_read
 		self.match_both_pairs           = options.match_both_pairs
+		self.max_spades_contig_coverage = options.max_spades_contig_coverage
 		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
@@ -102,7 +103,8 @@ class PlasmidTron:
 												True,
 												self.min_spades_contig_coverage,
 												False,
-												self.verbose)
+												self.verbose,
+												self.max_spades_contig_coverage)
 			spades_commands.append(spades_assembly.spades_command())
 			spades_first_assemblies.append(spades_assembly)
 			
@@ -117,7 +119,7 @@ class PlasmidTron:
 			if not os.path.exists(spades_assembly.spades_assembly_file()):
 				continue
 			
-			spades_assembly.remove_small_contigs(spades_assembly.spades_assembly_file(), spades_assembly.filtered_spades_assembly_file())
+			spades_assembly.remove_small_large_contigs(spades_assembly.spades_assembly_file(), spades_assembly.filtered_spades_assembly_file())
 		
 			if os.path.getsize(spades_assembly.filtered_spades_assembly_file()) <= self.min_contig_len:
 				self.logger.warning('Not enough data in the 1st assembly after filtering, skipping the rest of the steps %s', sample.basename)
@@ -189,7 +191,8 @@ class PlasmidTron:
 												False,
 												self.min_spades_contig_coverage,
 												True,
-												self.verbose)
+												self.verbose,
+												self.max_spades_contig_coverage)
 			spades_assemblies.append(final_spades_assembly)
 			final_spades_commands.append(final_spades_assembly.spades_command())
 			
@@ -205,7 +208,7 @@ class PlasmidTron:
 			if not os.path.exists(final_spades_assembly.spades_assembly_file()):
 				continue
 			
-			final_spades_assembly.remove_small_contigs(final_spades_assembly.spades_assembly_file(), final_spades_assembly.filtered_spades_assembly_file())
+			final_spades_assembly.remove_small_large_contigs(final_spades_assembly.spades_assembly_file(), final_spades_assembly.filtered_spades_assembly_file())
 			
 			if os.path.exists(final_spades_assembly.filtered_spades_assembly_file()):
 				print(final_spades_assembly.filtered_spades_assembly_file())

@@ -71,4 +71,11 @@ class InputTypes:
 			if  min_coverage >= 0 and min_coverage <= 1000000:
 				return min_coverage
 		raise argparse.ArgumentTypeError("Invalid minimum SPAdes contig coverage, try between 20 and 30.")
+		
+	def is_max_spades_contig_coverage_valid(value_str):
+		if value_str.isdigit():
+			max_coverage = int(value_str)
+			if  max_coverage >= 0 and max_coverage <= 1000000:
+				return max_coverage
+		raise argparse.ArgumentTypeError("Invalid maximum SPAdes contig coverage, try between 1000.")
 

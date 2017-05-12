@@ -1,3 +1,7 @@
+v0.3.3 - 12/05/17
+------
+Allow a maximum contig coverage to be set.
+
 v0.3.2 - 12/05/17
 ------
 Lower default values
