@@ -18,11 +18,10 @@ class TestFastqReadNames(unittest.TestCase):
 		
 		with open(f.output_readnames_file, 'r') as actual_file:
 			actual_config_content = actual_file.read()
-			self.assertEqual(actual_config_content, """\
-IL9_4021:8:1:8:1892#7/2
-IL9_4021:8:1:9:1658#7/2
-IL9_4021:8:1:9:1626#7/2
-""")
+			split_actual_content = actual_config_content.splitlines()
+			split_actual_content.sort()
+			expected_content = ['IL9_4021:8:1:8:1892#7/2', 'IL9_4021:8:1:9:1626#7/2', 'IL9_4021:8:1:9:1658#7/2']
+			self.assertListEqual(split_actual_content, expected_content)
 		os.remove(os.path.join(data_dir, 'output_file'))
 		
 		
@@ -44,12 +43,9 @@ paired_hit/2
 	
 		with open(f.output_readnames_file, 'r') as actual_file:
 			actual_config_content = actual_file.read()
-			self.assertEqual(actual_config_content, """\
-single_hit/1
-another_single_hit/2
-paired_hit/1
-paired_hit/2
-more_single_hits/1
-""")
+			split_actual_content = actual_config_content.splitlines()
+			split_actual_content.sort()
+			expected_content = ['another_single_hit/2', 'more_single_hits/1', 'paired_hit/1', 'paired_hit/2', 'single_hit/1']
+			self.assertEqual(split_actual_content, expected_content)
 	
 		os.remove(os.path.join(data_dir, 'output_file'))
