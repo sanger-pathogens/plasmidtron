@@ -22,8 +22,8 @@ class PlasmidTron:
 		self.start_time = int(time.time())
 		self.logger = logging.getLogger(__name__)
 		self.output_directory           = options.output_directory 
-		self.file_of_traits       = options.file_of_traits
-		self.file_of_nontraits    = options.file_of_nontraits
+		self.file_of_traits             = options.file_of_traits
+		self.file_of_nontraits          = options.file_of_nontraits
 		self.verbose                    = options.verbose
 		self.threads                    = options.threads
 		self.kmer                       = options.kmer
@@ -38,6 +38,7 @@ class PlasmidTron:
 		self.min_kmers_per_read         = options.min_kmers_per_read
 		self.match_both_pairs           = options.match_both_pairs
 		self.max_spades_contig_coverage = options.max_spades_contig_coverage
+		self.kmer_plot                  = options.kmer_plot
 		
 		if self.verbose:
 			self.logger.setLevel(logging.DEBUG)
@@ -238,15 +239,16 @@ class PlasmidTron:
 		self.logger.warning('Assembling all of the trait samples')
 		spades_assemblies = self.assemble_samples(trait_samples, self.keep_files)
 	
-		spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies if os.path.exists(s.filtered_spades_assembly_file())]
-		plot_kmers = PlotKmers( spades_assembly_files,
-								self.output_directory,
-								self.threads,
-								self.kmer,
-								self.max_kmers_threshold, 
-								self.verbose, 
-								self.plot_filename)
-		plot_kmers.generate_plot()
+		if self.kmer_plot:
+			spades_assembly_files = [s.filtered_spades_assembly_file() for s in spades_assemblies if os.path.exists(s.filtered_spades_assembly_file())]
+			plot_kmers = PlotKmers( spades_assembly_files,
+									self.output_directory,
+									self.threads,
+									self.kmer,
+									self.max_kmers_threshold, 
+									self.verbose, 
+									self.plot_filename)
+			plot_kmers.generate_plot()
 			
 		method_file = Methods(
 						os.path.join(self.output_directory, 'methods_summary.txt'), 
@@ -258,9 +260,9 @@ class PlasmidTron:
 						self.spades_exec, 
 						self.verbose)
 		method_file.create_file()
-		self.cleanup(kmc_samples, kmc_complex, kmc_filters, plot_kmers)
+		self.cleanup(kmc_samples, kmc_complex, kmc_filters)
 		
-	def cleanup(self,kmc_samples, kmc_complex, kmc_filters, plot_kmers):
+	def cleanup(self,kmc_samples, kmc_complex, kmc_filters):
 		if not self.keep_files:
 			# Delete all sample temp directories
 			self.logger.warning("Deleting intermediate files, use --verbose if you wish to keep them")
@@ -271,6 +273,4 @@ class PlasmidTron:
 			
 			for kmc_filter in kmc_filters:
 				kmc_filter.cleanup()
-			
-			#plot_kmers.cleanup()
 		

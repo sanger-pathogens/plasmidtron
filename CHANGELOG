@@ -1,3 +1,7 @@
+v0.3.4 - 12/06/17
+------
+Dont generate the Kmer plot by default, takes to much RAM
+
 v0.3.3 - 12/05/17
 ------
 Allow a maximum contig coverage to be set.

@@ -32,6 +32,7 @@ parser.add_argument('--max_kmers_threshold',	 '-x', help='Exclude k-mers occurri
 parser.add_argument('--min_kmers_per_read',	 '-r', help='Min percentage kmer coverage of read to keep it[%(default)s]', type=InputTypes.is_min_kmers_per_read, default = 0.2)
 parser.add_argument('--match_both_pairs',	 '-d', help='Match both pairs to keep them in assembly [%(default)s]', action='store_true')
 parser.add_argument('--plot_filename', '-p', help='Kmer to use, depends on read length [%(default)s]', default = 'kmerplot.png')
+parser.add_argument('--kmer_plot',  '-g', action='store_true', help='Create kmer plot [%(default)s]')
 parser.add_argument('--spades_exec', '-s', help='Set the SPAdes executable [%(default)s]', type=str, default = 'spades.py')
 parser.add_argument('--threads', '-t', help='Number of threads [%(default)s]', type=InputTypes.is_threads_valid, default = 1)
 parser.add_argument('--verbose', '-v', action='store_true', help='Turn on debugging [%(default)s]', default = 0)
