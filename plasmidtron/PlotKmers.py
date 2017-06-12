@@ -113,8 +113,10 @@ class PlotKmers:
 			interval_size = int(math.ceil(len(kmer_matrix)/self.max_kmers_to_show))
 			
 		base_sample_names = []
+		common_prefix = os.path.commonprefix(self.assemblies)		
 		for assembly in self.assemblies:
-			base_sample_names.append(os.path.basename(assembly))
+			stripped_assembly = assembly.replace(common_prefix, '').replace('/filtered_scaffolds.fasta','')
+			base_sample_names.append(os.path.basename(stripped_assembly))
 		
 		fig, ax = plt.subplots()
 		ax.matshow(kmer_matrix, cmap=plt.cm.Greys, aspect='auto')

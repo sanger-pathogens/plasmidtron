@@ -22,14 +22,21 @@ optional arguments:
   --keep_files, -f      Keep intermediate files [False]
   --kmer KMER, -k KMER  Kmer to use, depends on read length [51]
   --min_contig_len MIN_CONTIG_LEN, -l MIN_CONTIG_LEN
-                        Minimum contig length in final assembly [3000]
+                        Minimum contig length in final assembly [300]
   --min_spades_contig_coverage MIN_SPADES_CONTIG_COVERAGE, -c MIN_SPADES_CONTIG_COVERAGE
                         Filter out contigs with low coverage. Set to 0 to keep
-                        all. [30]
+                        all. [5]
+  --max_spades_contig_coverage MAX_SPADES_CONTIG_COVERAGE, -e MAX_SPADES_CONTIG_COVERAGE
+                        Filter out contigs with high coverage. Set to 0 to keep
+                        all. [500]
   --min_kmers_threshold MIN_KMERS_THRESHOLD, -m MIN_KMERS_THRESHOLD
-                        Exclude k-mers occurring less than this [30]
+                        Exclude k-mers occurring less than this [10]
   --max_kmers_threshold MAX_KMERS_THRESHOLD, -x MAX_KMERS_THRESHOLD
                         Exclude k-mers occurring more than this [254]
+  --min_kmers_per_read MIN_KMERS_PER_READ, -r MIN_KMERS_PER_READ
+                        Min percentage kmer coverage of read to keep it[0.1]
+  --match_both_pairs, -d
+                        Match both pairs to keep them in assembly [False]
   --plot_filename PLOT_FILENAME, -p PLOT_FILENAME
                         Kmer to use, depends on read length [kmerplot.png]
   --spades_exec SPADES_EXEC, -s SPADES_EXEC
@@ -41,7 +48,7 @@ optional arguments:
 ```
 
 ## Input files
-The file_of_traits and file_of_nontraits contain the filenames of the input samples. Each line in the file corresponds to a sample. If one file is given, the file is assumed to be FASTA. A second file can be given, separated by a comma, and it is assumed to be a FASTQ file. FASTA files are not assembled.
+The file_of_traits and file_of_nontraits contain the filenames of the input samples. Each line in the file corresponds to a sample. If one file is given, the file is assumed to be FASTA. A second file can be given, separated by a comma, and it is assumed to be a FASTQ file. FASTA files are not assembled. The input FASTA and FASTQ files can be optionally gzipped.
 
 ## Input parameters
 The following parameters change the results:
@@ -50,13 +57,17 @@ __action__: There are two fundamental methods of operation. The default is 'unio
 
 __kmer__: Choosing a kmer is not an exact science, and have greatly influence the final results. This kmer size is used by KMC for counting and filtering, and by SPAdes for assembly.  Ideally it should be between about 50-90% of the read length, should be an odd number and between 21 and 127 (SPAdes restriction).  If choose a kmer which is too small, you will get a lot more false positives. If you choose a kmer too big, you will use a lot more RAM and potentially get too little data returned. Quite often with Illumina data the beginning and end of the reads have higher sequencing error rates. Ideally you want a kmer size which sits nicely inside the good cycles of the read. Trimming with Trimmomatic can help if the quality collapses quite badly at the end of the read.
 
-__min_contig_len__: This needs to be a minimum of twice the mean fragment size (insert size) of your library to reduce the impact of false positives. For example if you have a single kmer which randomly occurs in the genome, using it will then allow for reads upstream and downstream, plus their mates, to be assembled. This variable can control this noise, and inpractice you will want to set this a fair bit higher, perhaps 6 times the fragment size. Setting this too high will lead to valuable information being lost (e.g. small plasmids).
+__min_contig_len__: This needs to be larger than the mean fragment size (insert size) of your library to reduce the impact of false positives. For example if you have a single kmer which randomly occurs in the genome, using it will then allow for reads upstream and downstream, plus their mates, to be assembled. This variable can control this noise. Setting this too high will lead to valuable information being lost (e.g. small plasmids) and a more fragmented assembly.
 
-__min_kmers_threshold__: This value lets you set a minimum threshold for the occurance of a kmer. Ideally you need about 30X depth of coverage to perform de novo assembly. This value default to 25, so excluding kmers below this level eliminates kmers where you wont get a good assembly, thus reducing false positives. The maximum value is 254, but the results poor.
+__match_both_pairs__: When filtering kmers, you can choose to require kmers are found on both forward and reverse, or just on one of the reads, to consider it for assembly. By default only one of the reads needs to match. Requiring both reads to match will reduce the noise, but also lead to a more fragmented, shorter, assembly.
+
+__min_kmers_per_read__: When filtering reads for an assembly, controls how much of the read must be covered by kmers for the assembly.  Set it to 1 to require 100% of the read to be covered by trait kmers to be used in an assembly. The formula is: kmers_needed = ((read - kmer_length) + 1)*min_kmers_per_read.
+
+__min_kmers_threshold__: This value lets you set a minimum threshold for the occurance of a kmer. Ideally you need at least 20X depth of coverage to perform de novo assembly. This value defaults to 10, since kmers below this level wont produce a good assembly, thus reducing false positives. The maximum value is 254, but the results are poor unless you have insane coverage (like virus data).
 
 __max_kmers_threshold__: This value lets you set a maximum threshold for the occurance of a kmer. The occurance of kmers forms a Poisson distribution, with a very long tail. With KMC, there is a catchall bin for occurances of 255 and greater (so 255 is the maximum value). By default it is set to 254 which excludes this catchall bin for kmers, and thus the long tail of very common kmers. This reduces the false positives. You need to be careful when setting this lower because you could exclude all of the interesting kmers.
 
-__min_spades_contig_coverage__: Filter out contigs with less than this coverage in the SPAdes assemblies. This gets applied at the end of each SPAdes assembly, and filters out some of the noise. If your input data is lower coverage you may need to reduce this value but the defaults are sensible.
+__min_spades_contig_coverage__: Filter out contigs with less than this kmer coverage in the SPAdes assemblies. This gets applied at the end of each SPAdes assembly, and filters out some of the noise. If your input data is lower coverage you may need to reduce this value but the defaults are sensible. The kmer coverage value produced by SPAdes is half the read coverage, so a contig with 10X kmer coverage from SPAdes actually has 20X read coverage.
 
 The following parameters have no impact on the results:
 
@@ -64,7 +75,7 @@ __keep_files__: Keep all intermediate and temporary files. The default is to del
 
 __plot_filename__: The name of the kmer plot file. By default it is called kmerplot.png and is located in the output directory.
 
-__threads__: This sets the number of threads available to KMC and SPAdes. It should never be more than the number of CPUs available on the server. If you use a compute cluster, make sure to request the same number of threads on a single server. It defaults to 1 and you will get a reasonable speed increase by adding a few CPUs, but the benefit tails off quite rapidly since the I/O becomes the limiting factor (speed of reading files from a disk or network).
+__threads__: This sets the number of threads available to KMC and SPAdes. It should never be more than the number of CPUs available on the server. Unfortunatly running multiple instances of KMC on the same server doesnt work scale well, and you get strange errors & crashes.  It has been tested with 16 CPUs and it works fine.  If you use a compute cluster, make sure to request the same number of threads on a single server. It defaults to 1 and you will get a reasonable speed increase by adding a few CPUs, but the benefit tails off quite rapidly since the I/O becomes the limiting factor (speed of reading files from a disk or network).
 
 __spades_exec__: By default SPAdes is assumed to be in your PATH and called spades.py. You can set this to point to a different executable, which might be required if you have multiple versions of SPAdes installed.
 
@@ -111,7 +122,7 @@ By default all of the intermediate files are cleaned up at the end, so the overa
 For every trait sample you will get an assembly of nucleotide sequences in FASTA format. These are scaffolded by SPAdes and have small sequences filtered out. You will also get a text file describing the process, with versions of software, parameters used and references.
 
 # Installation
-There are a number of installation methods. Choosing the right one for the system you use will simpliy the process.
+There are a number of installation methods. Choosing the right one for the system you use will simpliy the process.  PlasmidTron will work with KMC version 2.3 or 3. Version 3 gives the best performance, but 2.3 is the version thats currently packaged by apt.
 
 * Linux 
   * Debian Testing/Ubuntu 16.04 (Xenial)

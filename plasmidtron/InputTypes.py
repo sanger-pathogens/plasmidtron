@@ -31,6 +31,12 @@ class InputTypes:
 				return kmer
 		raise argparse.ArgumentTypeError("Invalid Kmer value, it must be an odd integer between 21 and 127")
 		
+	def is_min_kmers_per_read(value_str):
+		min_kmers = float(value_str)
+		if min_kmers > 0 and min_kmers < 1:
+				return min_kmers
+		raise argparse.ArgumentTypeError("Invalid min percentage kmer coverage, must be between 0 and 1")
+		
 	def is_min_contig_len_valid(value_str):
 		if value_str.isdigit():
 			min_contig_len = int(value_str)
@@ -48,9 +54,9 @@ class InputTypes:
 	def is_threads_valid(value_str):
 		if value_str.isdigit():
 			threads = int(value_str)
-			if  threads > 0 and threads <= 512:
+			if  threads > 0 and threads <= 32:
 				return threads
-		raise argparse.ArgumentTypeError("Invalid number of threads, it must at least 1 and less than the No. of CPUs")
+		raise argparse.ArgumentTypeError("Invalid number of threads, it must at least 1 and less than 32.")
 		
 	def is_max_kmers_threshold_valid(value_str):
 		if value_str.isdigit():
@@ -65,4 +71,11 @@ class InputTypes:
 			if  min_coverage >= 0 and min_coverage <= 1000000:
 				return min_coverage
 		raise argparse.ArgumentTypeError("Invalid minimum SPAdes contig coverage, try between 20 and 30.")
+		
+	def is_max_spades_contig_coverage_valid(value_str):
+		if value_str.isdigit():
+			max_coverage = int(value_str)
+			if  max_coverage >= 0 and max_coverage <= 1000000:
+				return max_coverage
+		raise argparse.ArgumentTypeError("Invalid maximum SPAdes contig coverage, try between 1000.")
 
