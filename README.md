@@ -133,6 +133,7 @@ There are a number of installation methods. Choosing the right one for the syste
   * HomeBrew
 * Linux/OSX/Windows/Cloud
   * Docker
+  * Bioconda
 
 ## Linux
 The instructions for Linux assume you have root (sudo) on your machine.
@@ -200,6 +201,13 @@ docker pull sangerpathogens/plasmidtron
 To use it you would use a command such as this (substituting in your directories), where your files are assumed to be stored in /home/ubuntu/data:
 ```
 docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
+```
+
+## Bioconda
+First install conda and setup the channels for bioconda.
+
+```
+conda install plasmidtron
 ```
 
 # FAQ
