@@ -112,6 +112,36 @@ OUTPUT_PARAMS:
 """)
 		
 		k.cleanup()
+		
+		
+	def test_dots_in_filename(self):
+		k = KmcComplex(os.getcwd(), 1, 1, [SampleData('a.b#c_1.fastq', 'a.b#c_2.fastq'), SampleData('a.b.c.d_1.fastq', 'a.b.c.d_2.fastq')], [SampleData('a.b.c.d.e_1.fastq', 'a.b.c.d.e_2.fastq')], 'intersection', False)
+		k.create_config_files()
+		
+		with open(os.path.join(k.temp_working_dir, 'traits_config_file'), 'r') as actual_file:
+			actual_config_content = actual_file.read()
+			self.assertEqual(actual_config_content, """\
+INPUT:
+a_b_c = kmc_a.b#c
+a_b_c_d = kmc_a.b.c.d
+a_b_c_d_e = kmc_a.b.c.d.e
+OUTPUT:
+traits = a_b_c*a_b_c_d
+OUTPUT_PARAMS:
+-ci1
+""") 
+		with open(os.path.join(k.temp_working_dir, 'nontraits_config_file'), 'r') as actual_file:
+			actual_config_content = actual_file.read()
+			self.assertEqual(actual_config_content, """\
+INPUT:
+a_b_c = kmc_a.b#c
+a_b_c_d = kmc_a.b.c.d
+a_b_c_d_e = kmc_a.b.c.d.e
+OUTPUT:
+nontraits = a_b_c_d_e
+OUTPUT_PARAMS:
+-ci1
+""")
 
 	def test_kmc_complex_command(self):
 		k = KmcComplex(os.getcwd(), 1, 1, [], [], 'union', False)

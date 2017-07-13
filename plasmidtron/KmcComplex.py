@@ -5,9 +5,8 @@ import tempfile
 import subprocess
 import logging
 import shutil
+import re
 from plasmidtron.SampleData import SampleData
-
-		
 
 class KmcComplex:
 	def __init__(self,output_directory, threads, min_kmers_threshold, trait_samples, nontrait_samples, action, verbose):
@@ -27,7 +26,8 @@ class KmcComplex:
 		self.temp_working_dir = tempfile.mkdtemp(dir=output_directory)
 
 	def sample_definition_line(self, sample):
-		return ' '.join([sample.basename.replace('#','_'), '=', sample.database_name])	
+		normalised_name = re.sub('\W', '_', sample.basename)
+		return ' '.join([normalised_name, '=', sample.database_name])	
 		
 	def write_config_file(self, filename, input_section, output_section, output_parameters):
 		self.logger.warning("Creating config file for 'complex' task")
@@ -69,7 +69,8 @@ class KmcComplex:
 	def trait_samples_to_set_operation_str(self):
 		trait_basenames = []
 		for sample in self.trait_samples:
-			trait_basenames.append(sample.basename.replace('#','_'))
+			normalised_name = re.sub('\W', '_', sample.basename)
+			trait_basenames.append(normalised_name)
 	
 		trait_set_operation = '+'
 		if self.action == 'intersection':
@@ -81,7 +82,8 @@ class KmcComplex:
 	def nontrait_samples_to_set_operation_str(self):
 		nontrait_basenames = []
 		for sample in self.nontrait_samples:
-			nontrait_basenames.append(sample.basename.replace('#','_'))
+			normalised_name = re.sub('\W', '_', sample.basename)
+			nontrait_basenames.append(normalised_name)
 	
 		set_operation_str = 'nontraits = ' + '+'.join(nontrait_basenames)
 		return set_operation_str
