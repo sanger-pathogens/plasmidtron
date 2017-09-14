@@ -203,7 +203,7 @@ To use it you would use a command such as this (substituting in your directories
 docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
 ```
 
-## Bioconda
+## Bioconda
 First install conda and setup the channels for bioconda.
 
 ```
