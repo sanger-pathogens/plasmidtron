@@ -12,6 +12,8 @@ class Options:
 		self.threads                    = threads
 		self.kmer                       = kmer
 		self.min_kmers_threshold        = min_kmers_threshold
+		self.min_controls_kmers_threshold = min_kmers_threshold
+		self.max_controls_kmers_threshold = max_kmers_threshold
 		self.spades_exec                = spades_exec
 		self.min_contig_len             = min_contig_len
 		self.max_kmers_threshold        = max_kmers_threshold

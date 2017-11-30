@@ -1,3 +1,7 @@
+v0.4.0 - 30/11/17
+------
+Allow nontrait kmer thresholds to be set independently
+
 v0.3.5 - 13/07/17
 ------
 Remove nonword characters from complex config files sample names.
