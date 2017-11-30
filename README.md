@@ -3,6 +3,9 @@ You have a set of samples where you have a known phenotype, and a set of control
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)
 
+## Paper
+PlasmidTron: assembling the cause of phenotypes from NGS data, Andrew J Page, Alexander Wailan, Yan Shao, Kim Judge,  Gordon Dougan, Elizabeth J. Klemm, Nicholas R. Thomson, Jacqueline A. Keane, 2017, bioRxiv 188920; doi: [https://doi.org/10.1101/188920](https://www.biorxiv.org/content/early/2017/09/15/188920)
+
 ## Usage
 ```
 usage: plasmidtron [options] output_directory file_of_traits file_of_nontraits
@@ -133,6 +136,7 @@ There are a number of installation methods. Choosing the right one for the syste
   * HomeBrew
 * Linux/OSX/Windows/Cloud
   * Docker
+  * Bioconda
 
 ## Linux
 The instructions for Linux assume you have root (sudo) on your machine.
@@ -200,6 +204,13 @@ docker pull sangerpathogens/plasmidtron
 To use it you would use a command such as this (substituting in your directories), where your files are assumed to be stored in /home/ubuntu/data:
 ```
 docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
+```
+
+## Bioconda
+First install conda and setup the channels for bioconda.
+
+```
+conda install plasmidtron
 ```
 
 # FAQ
