@@ -29,6 +29,8 @@ class PlasmidTron:
 		self.kmer                       = options.kmer
 		self.min_kmers_threshold        = options.min_kmers_threshold
 		self.max_kmers_threshold        = options.max_kmers_threshold
+		self.min_controls_kmers_threshold = options.min_controls_kmers_threshold
+		self.max_controls_kmers_threshold = options.max_controls_kmers_threshold
 		self.spades_exec                = options.spades_exec
 		self.min_contig_len             = options.min_contig_len
 		self.action                     = options.action
@@ -50,13 +52,20 @@ class PlasmidTron:
 	def generate_kmer_databases(self, trait_samples, nontrait_samples):
 		kmc_samples =[]
 		kmc_commands_to_run = []
-		for set_of_samples in [trait_samples, nontrait_samples]:
-			for sample in set_of_samples:
-				self.logger.warning('Generating a kmer database for sample %s', sample.basename)
-				kmc_sample = Kmc(self.output_directory, sample, self.command_runner.kmc_threads(), self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
-				kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
-				kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
-				kmc_samples.append(kmc_sample)
+
+		for sample in trait_samples:
+			self.logger.warning('Generating a kmer database for trait sample %s', sample.basename)
+			kmc_sample = Kmc(self.output_directory, sample, self.command_runner.kmc_threads(), self.kmer, self.min_kmers_threshold, self.max_kmers_threshold, self.verbose)
+			kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
+			kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
+			kmc_samples.append(kmc_sample)
+			
+		for sample in nontrait_samples:
+			self.logger.warning('Generating a kmer database for nontrait sample %s', sample.basename)
+			kmc_sample = Kmc(self.output_directory, sample, self.command_runner.kmc_threads(), self.kmer, self.min_controls_kmers_threshold, self.max_controls_kmers_threshold, self.verbose)
+			kmc_sample.create_file_of_file_names(kmc_sample.sample.file_of_fastq_files)
+			kmc_commands_to_run.append(kmc_sample.construct_kmc_command())
+			kmc_samples.append(kmc_sample)
 		
 		self.command_runner.run_list_of_kmc_commands( kmc_commands_to_run)	
 		return kmc_samples

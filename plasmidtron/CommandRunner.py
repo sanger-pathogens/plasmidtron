@@ -27,7 +27,7 @@ class CommandRunner:
 	def run_sequentially(self, commands_to_run):
 		for c in commands_to_run:
 			self.logger.warning('GNU parallel command to run %s', c)
-			subprocess.call(c, shell=True)
+			subprocess.check_call(c, shell=True)
 	
 	'''KMC handles multithreading badly. So give each process 2 threads and limit the overall total independant processes'''
 	def kmc_threads(self):
@@ -53,5 +53,5 @@ class CommandRunner:
 			
 		gnu_parallel_command = ' '.join(['parallel', '--gnu', '-j '+ str(processes_in_parallel), '<',file_of_commands])
 		self.logger.warning('GNU parallel command to run %s', gnu_parallel_command)
-		subprocess.call(gnu_parallel_command, shell=True)
+		subprocess.check_call(gnu_parallel_command, shell=True)
 		shutil.rmtree(temp_working_dir)

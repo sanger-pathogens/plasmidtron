@@ -87,7 +87,7 @@ class SpadesAssembly:
 	
 	def run(self):
 		self.logger.warning("Assembling sample" )
-		subprocess.call(self.spades_command(), shell=True)
+		subprocess.check_call(self.spades_command(), shell=True)
 		self.remove_small_large_contigs(self.spades_assembly_file(), self.filtered_spades_assembly_file())
 
 	def cleanup(self):

@@ -30,7 +30,7 @@ class Kmc:
 		self.create_file_of_file_names(self.sample.file_of_fastq_files)
 		self.logger.warning("Running KMC command" )
 		
-		subprocess.call(self.construct_kmc_command(),shell=True)
+		subprocess.check_call(self.construct_kmc_command(),shell=True)
 	
 	def create_file_of_file_names(self, filename):
 		with open(filename, 'w') as file_of_sample_fastqs:
