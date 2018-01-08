@@ -110,11 +110,11 @@ class KmcComplex:
 		original_cwd = os.getcwd()
 		os.chdir(self.temp_working_dir)
 		self.logger.warning('Traits %s', self.kmc_complex_command('traits_config_file'))
-		subprocess.call(self.kmc_complex_command('traits_config_file'), shell=True)
+		subprocess.check_call(self.kmc_complex_command('traits_config_file'), shell=True)
 		self.logger.warning('Non Traits %s', self.kmc_complex_command('nontraits_config_file'))
-		subprocess.call(self.kmc_complex_command('nontraits_config_file'), shell=True)
+		subprocess.check_call(self.kmc_complex_command('nontraits_config_file'), shell=True)
 		self.logger.warning('Combined %s', self.kmc_complex_command('combined_config_file'))
-		subprocess.call(self.kmc_complex_command('combined_config_file'), shell=True)
+		subprocess.check_call(self.kmc_complex_command('combined_config_file'), shell=True)
 		os.chdir(original_cwd)
 		
 	def cleanup(self):

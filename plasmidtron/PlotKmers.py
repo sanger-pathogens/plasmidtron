@@ -139,7 +139,7 @@ class PlotKmers:
 		else:
 			command_to_run =  ' '.join(['kmc_tools', '-t'+str(self.threads), 'transform', database, 'dump', dump_file, self.redirect_output()])
 		self.logger.warning('KMC dump command: %s', command_to_run)
-		subprocess.call(command_to_run, shell=True)
+		subprocess.check_call(command_to_run, shell=True)
 		
 		kmers = []
 		# read in the kmer dump file - sequence then frequency

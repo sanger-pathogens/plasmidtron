@@ -37,7 +37,7 @@ class KmcFasta:
 	
 	def run(self):	
 		self.logger.warning("Extracting Kmers from FASTA file" )
-		subprocess.call(self.kmc_command(),shell=True)
+		subprocess.check_call(self.kmc_command(),shell=True)
 	
 	def cleanup(self):
 		shutil.rmtree(self.temp_working_dir)	
