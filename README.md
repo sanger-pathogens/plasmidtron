@@ -131,9 +131,6 @@ There are a number of installation methods. Choosing the right one for the syste
   * Debian Testing/Ubuntu 16.04 (Xenial)
   * Ubuntu 14.04 (Trusty)
   * Ubuntu 12.04 (Precise)
-  * LinuxBrew
-* OSX
-  * HomeBrew
 * Linux/OSX/Windows/Cloud
   * Docker
   * Bioconda
@@ -172,26 +169,6 @@ source ./install_dependancies.sh
 pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
 ```
 
-### Linuxbrew
-These instructions are untested. First install [LinuxBrew](http://linuxbrew.sh/), then follow the instructions below.
-
-```
-brew tap homebrew/science
-brew update
-brew install python3 kmc spades parallel
-pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
-```
-
-## OSX
-### Homebrew
-These instructions are untested. First install [HomeBrew](http://brew.sh/), then follow the instructions below.
-
-```
-brew tap homebrew/science
-brew update
-brew install python3 kmc spades parallel
-pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
-```
 
 # Linux/OSX/Windows/Cloud
 ## Docker 
