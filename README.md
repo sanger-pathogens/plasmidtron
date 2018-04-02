@@ -4,7 +4,7 @@ You have a set of samples where you have a known phenotype, and a set of control
 [![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)
 
 ## Paper
-PlasmidTron: assembling the cause of phenotypes from NGS data, Andrew J Page, Alexander Wailan, Yan Shao, Kim Judge,  Gordon Dougan, Elizabeth J. Klemm, Nicholas R. Thomson, Jacqueline A. Keane, 2017, bioRxiv 188920; doi: [https://doi.org/10.1101/188920](https://www.biorxiv.org/content/early/2017/09/15/188920)
+PlasmidTron: assembling the cause of phenotypes and genotypes from NGS data, Andrew J Page, Alexander Wailan, Yan Shao, Kim Judge,  Gordon Dougan, Elizabeth J. Klemm, Nicholas R. Thomson, Jacqueline A. Keane, 2018, Microbial Genomics 4(3); doi: [10.1099/mgen.0.000164](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)
 
 ## Usage
 ```
