@@ -1,10 +1,113 @@
 # PlasmidTron
-You have a set of samples where you have a known phenotype, and a set of controls. PlasmidTron lets you assemble the differences between the two so that you can gain a better understanding of the phenotype and the other sequences around it (the rest of the plasmid).  For example, often researchers will just look for an anti-microbial resistance gene, and look no further, because its still a difficult problem. PlasmidTron can let you see the sequence around your gene, giving you greater biological insights into the mechanisms of the resistance. Whilst its primary purpose is to pull out plasmids, phage can also be recovered.
+A kmer based approach for identifying plasmids.
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/plasmidtron/blob/master/LICENSE)
+[![status](https://img.shields.io/badge/MGEN-10.1099%2Fmgen.0.000164-brightgreen.svg)](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)
 
-## Paper
-PlasmidTron: assembling the cause of phenotypes and genotypes from NGS data, Andrew J Page, Alexander Wailan, Yan Shao, Kim Judge,  Gordon Dougan, Elizabeth J. Klemm, Nicholas R. Thomson, Jacqueline A. Keane, 2018, Microbial Genomics 4(3); doi: [10.1099/mgen.0.000164](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)
+## Contents
+  * [Introduction](#introduction)
+  * [Installation](#installation)
+    * [Required dependencies](#required-dependencies)
+    * [Required resources](#required-resources)
+    * [Linux](#linux)
+    * [Linux/OSX/Windows/Cloud](#linuxosxwindowscloud)
+  * [Usage](#usage)
+    * [Input files](#input-files)
+    * [Input parameters](#input-parameters)
+    * [Outputs](#outputs)
+    * [plotkmers](#plotkmers)
+  * [License](#license)
+  * [Feedback/Issues](#feedbackissues)
+  * [Citation](#citation)
+  * [FAQ](#faq)
+
+## Introduction
+You have a set of samples where you have a known phenotype, and a set of controls. PlasmidTron lets you assemble the differences between the two so that you can gain a better understanding of the phenotype and the other sequences around it (the rest of the plasmid).  For example, often researchers will just look for an anti-microbial resistance gene, and look no further, because its still a difficult problem. PlasmidTron can let you see the sequence around your gene, giving you greater biological insights into the mechanisms of the resistance. Whilst its primary purpose is to pull out plasmids, phage can also be recovered.
+  
+## Installation
+PlasmidTron has the following dependencies:
+
+### Required dependencies
+ * Spades (>= 3.10.1)
+ * KMC (2.3 or 3)
+ * Parallel (>= 20170122)
+ * biopython (>= 1.68)
+ * matplotlib (>= 2.0.0)
+ * pyfastaq (>= 3.12.0)
+
+PlasmidTron will work with KMC version 2.3 or 3. Version 3 gives the best performance, but 2.3 is the version thats currently packaged by apt.
+
+### Required resources
+#### RAM (memory)
+The largest consumer of RAM (memory) is SPAdes. Assembling a whole bacteria takes approximately 4GB of RAM. If the filtering allows everything through then this worst case will occur, but generally less than 1GB of RAM is required. Poor quality sequencing data will increase the amount of RAM required. In this instance running Trimmomatic first will help greatly.
+
+#### Disk space
+By default all of the intermediate files are cleaned up at the end, so the overall disk space usage is quite low. As an example, an input of 800 Mbytes of compressed reads created 40 Mbytes of output data at the end. While the algorithm is running the disk usage will never exceed the size of the input reads. The intermediate files can be kept if you use the 'verbose' option.
+   
+There are a number of installation methods. Choosing the right one for the system you use will simpliy the process. If you encounter an issue when installing PlasmidTron please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/plasmidtron/issues) or email us at plasmidtron-help@sanger.ac.uk.
+
+* Linux
+  * Debian Testing/Ubuntu 16.04 (Xenial)
+  * Ubuntu 14.04 (Trusty)
+  * Ubuntu 12.04 (Precise)
+* Linux/OSX/Windows/Cloud
+  * Docker
+  * Bioconda
+
+### Linux
+The instructions for Linux assume you have root (sudo) on your machine.
+
+#### Debian Testing/Ubuntu 16.04 (Xenial)
+
+```
+apt-get update -qq
+apt-get install -y kmc git python3 python3-setuptools python3-biopython python3-pip parallel
+pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
+```
+
+#### Ubuntu 14.04 (Trusty)
+You can either manually install [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about) and [SPAdes](http://bioinf.spbau.ru/spades), or use the install_dependancies script (you will need to add some paths to your PATH environment variable).
+
+```
+apt-get update -qq
+apt-get install -y wget git python3 python3-setuptools python3-biopython python3-pip parallel
+wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
+source ./install_dependancies.sh
+pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
+```
+
+#### Ubuntu 12.04 (Precise)
+PlasmidTron uses BioPython, however the version of Python3 bundled with Precise is too old, so you will have to manually install Python3 (3.3+) along with pip3.
+Once you have done this you can proceed with the instructions below. You can either manually install [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about) and [SPAdes](http://bioinf.spbau.ru/spades), or use the install_dependancies script (you will need to add some paths to your PATH environment variable).
+
+```
+apt-get update -qq
+apt-get install -y git wget parallel
+wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
+source ./install_dependancies.sh
+pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
+```
+
+### Linux/OSX/Windows/Cloud
+#### Docker
+Install [Docker](https://www.docker.com/).  We have a docker container which gets automatically built from the latest version of PlasmidTron. To install it:
+
+```
+docker pull sangerpathogens/plasmidtron
+```
+
+To use it you would use a command such as this (substituting in your directories), where your files are assumed to be stored in /home/ubuntu/data:
+```
+docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
+```
+
+#### Bioconda
+First install conda and setup the channels for bioconda.
+
+```
+conda install plasmidtron
+```
 
 ## Usage
 ```
@@ -49,14 +152,13 @@ optional arguments:
   --verbose, -v         Turn on debugging [0]
   --version             show program's version number and exit
 ```
-
-## Input files
+### Input files
 The file_of_traits and file_of_nontraits contain the filenames of the input samples. Each line in the file corresponds to a sample. If one file is given, the file is assumed to be FASTA. A second file can be given, separated by a comma, and it is assumed to be a FASTQ file. FASTA files are not assembled. The input FASTA and FASTQ files can be optionally gzipped.
 
-## Input parameters
+### Input parameters
 The following parameters change the results:
 
-__action__: There are two fundamental methods of operation. The default is 'union', where kmers which occur in ANY trait sample, but are absent from the nontrait samples, get used to filter the reads. So in effect you are assembling the whole accessory genome of the trait samples. This leads to larger end assemblies and more false positives, but will capture greater regions of the accessory genome. It is tolerant to situations where you have a plasmid which can vary substantially with different backbones or payloads.  The next is 'intersection', where kmers must occur in ALL trait samples and not in the nontrait samples. This leads to smaller end assemblies and more fragmentation, with less false positives.  It is less tolerant to variation. 
+__action__: There are two fundamental methods of operation. The default is 'union', where kmers which occur in ANY trait sample, but are absent from the nontrait samples, get used to filter the reads. So in effect you are assembling the whole accessory genome of the trait samples. This leads to larger end assemblies and more false positives, but will capture greater regions of the accessory genome. It is tolerant to situations where you have a plasmid which can vary substantially with different backbones or payloads.  The next is 'intersection', where kmers must occur in ALL trait samples and not in the nontrait samples. This leads to smaller end assemblies and more fragmentation, with less false positives.  It is less tolerant to variation.
 
 __kmer__: Choosing a kmer is not an exact science, and have greatly influence the final results. This kmer size is used by KMC for counting and filtering, and by SPAdes for assembly.  Ideally it should be between about 50-90% of the read length, should be an odd number and between 21 and 127 (SPAdes restriction).  If choose a kmer which is too small, you will get a lot more false positives. If you choose a kmer too big, you will use a lot more RAM and potentially get too little data returned. Quite often with Illumina data the beginning and end of the reads have higher sequencing error rates. Ideally you want a kmer size which sits nicely inside the good cycles of the read. Trimming with Trimmomatic can help if the quality collapses quite badly at the end of the read.
 
@@ -84,8 +186,10 @@ __spades_exec__: By default SPAdes is assumed to be in your PATH and called spad
 
 __verbose__: By default the output is limited and the software runs quietly. Setting this flag allows you to output more details of the software as it runs. There is a lot of output with this option turned on.
 
+### Outputs
+For every trait sample you will get an assembly of nucleotide sequences in FASTA format. These are scaffolded by SPAdes and have small sequences filtered out. You will also get a text file describing the process, with versions of software, parameters used and references.
 
-# plotkmers
+### plotkmers
 The kmer plots can be run independantly of the plasmidtron script if you wish. All you need is a set of FASTA files as input and it will produce a plot showing the presence and absense of kmers in each sample. The input parameters are similar to the plasmidtron script.
 
 ```
@@ -111,92 +215,24 @@ optional arguments:
                         Number of threads [1]
   --keep_files, -f      Keep intermediate files [False]
   --verbose, -v         Turn on debugging [0]
-  --version             show program's version number and exit
+  --version             show program's version number and ex
 ```
 
-## Required resources
-### RAM (memory)
-The largest consumer of RAM (memory) is SPAdes. Assembling a whole bacteria takes approximately 4GB of RAM. If the filtering allows everything through then this worst case will occur, but generally less than 1GB of RAM is required. Poor quality sequencing data will increase the amount of RAM required. In this instance running Trimmomatic first will help greatly.
+## License
+PlasmidTron is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/plasmidtron/blob/master/LICENSE).
 
-### Disk space
-By default all of the intermediate files are cleaned up at the end, so the overall disk space usage is quite low. As an example, an input of 800 Mbytes of compressed reads created 40 Mbytes of output data at the end. While the algorithm is running the disk usage will never exceed the size of the input reads. The intermediate files can be kept if you use the 'verbose' option. 
+## Feedback/Issues
+Please report any issues to the [issues page](https://github.com/sanger-pathogens/plasmidtron/issues) or email plasmidtron-help@sanger.ac.uk.
 
-# Outputs 
-For every trait sample you will get an assembly of nucleotide sequences in FASTA format. These are scaffolded by SPAdes and have small sequences filtered out. You will also get a text file describing the process, with versions of software, parameters used and references.
+## Citation
+If you use this software please cite:
 
-# Installation
-There are a number of installation methods. Choosing the right one for the system you use will simpliy the process.  PlasmidTron will work with KMC version 2.3 or 3. Version 3 gives the best performance, but 2.3 is the version thats currently packaged by apt.
+__PlasmidTron: assembling the cause of phenotypes and genotypes from NGS data__, Andrew J Page, Alexander Wailan, Yan Shao, Kim Judge, Gordon Dougan, Elizabeth J. Klemm, Nicholas R. Thomson, Jacqueline A. Keane, 2018, Microbial Genomics 4(3); doi: [10.1099/mgen.0.000164](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)
 
-* Linux 
-  * Debian Testing/Ubuntu 16.04 (Xenial)
-  * Ubuntu 14.04 (Trusty)
-  * Ubuntu 12.04 (Precise)
-* Linux/OSX/Windows/Cloud
-  * Docker
-  * Bioconda
-
-## Linux
-The instructions for Linux assume you have root (sudo) on your machine.
-
-### Debian Testing/Ubuntu 16.04 (Xenial)
-
-```
-apt-get update -qq
-apt-get install -y kmc git python3 python3-setuptools python3-biopython python3-pip parallel
-pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
-```
-
-### Ubuntu 14.04 (Trusty)
-You can either manually install [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about) and [SPAdes](http://bioinf.spbau.ru/spades), or use the install_dependancies script (you will need to add some paths to your PATH environment variable).
-
-```
-apt-get update -qq
-apt-get install -y wget git python3 python3-setuptools python3-biopython python3-pip parallel
-wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
-source ./install_dependancies.sh
-pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
-```
-
-### Ubuntu 12.04 (Precise)
-PlasmidTron uses BioPython, however the version of Python3 bundled with Precise is too old, so you will have to manually install Python3 (3.3+) along with pip3.
-Once you have done this you can proceed with the instructions below. You can either manually install [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about) and [SPAdes](http://bioinf.spbau.ru/spades), or use the install_dependancies script (you will need to add some paths to your PATH environment variable).
-
-```
-apt-get update -qq
-apt-get install -y git wget parallel
-wget https://raw.githubusercontent.com/sanger-pathogens/plasmidtron/master/install_dependancies.sh
-source ./install_dependancies.sh
-pip3 install git+git://github.com/sanger-pathogens/plasmidtron.git
-```
-
-
-# Linux/OSX/Windows/Cloud
-## Docker 
-Install [Docker](https://www.docker.com/).  We have a docker container which gets automatically built from the latest version of PlasmidTron. To install it:
-
-```
-docker pull sangerpathogens/plasmidtron
-```
-
-To use it you would use a command such as this (substituting in your directories), where your files are assumed to be stored in /home/ubuntu/data:
-```
-docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/plasmidtron plasmidtron output traits.csv nontraits.csv
-```
-
-## Bioconda
-First install conda and setup the channels for bioconda.
-
-```
-conda install plasmidtron
-```
-
-# FAQ
-## terminate called after throwing an instance of 'std::bad_alloc'
-KMC can cause an error if there are too many threads running at once for the underlying system to cope with. A non-blocking socket buffer fills up and the command fails. The only solution (without modifying KMC) is to reduce the number of threads. 
-
-
-# Additional software to cite
 If you use multi-threading you are kindly requested to cite GNU parallel:
 
 O. Tange (2011): GNU Parallel - The Command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.
 
+## FAQ
+### Terminate called after throwing an instance of 'std::bad_alloc'
+KMC can cause an error if there are too many threads running at once for the underlying system to cope with. A non-blocking socket buffer fills up and the command fails. The only solution (without modifying KMC) is to reduce the number of threads. 
