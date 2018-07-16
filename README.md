@@ -1,9 +1,13 @@
 # PlasmidTron
 A kmer based approach for identifying plasmids.
 
-[![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/plasmidtron/blob/master/LICENSE)
-[![status](https://img.shields.io/badge/MGEN-10.1099%2Fmgen.0.000164-brightgreen.svg)](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)
+[![Build Status](https://travis-ci.org/sanger-pathogens/plasmidtron.svg?branch=master)](https://travis-ci.org/sanger-pathogens/plasmidtron)   
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/plasmidtron/blob/master/LICENSE)   
+[![status](https://img.shields.io/badge/MGEN-10.1099%2Fmgen.0.000164-brightgreen.svg)](http://mgen.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000164)   
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/recipes/plasmidtron/README.html)  
+[![Container ready](https://img.shields.io/badge/container-ready-brightgreen.svg)](https://quay.io/repository/biocontainers/plasmidtron)  
+[![Docker Build Status](https://img.shields.io/docker/build/sangerpathogens/plasmidtron.svg)](https://hub.docker.com/r/sangerpathogens/plasmidtron)  
+[![Docker Pulls](https://img.shields.io/docker/pulls/sangerpathogens/plasmidtron.svg)](https://hub.docker.com/r/sangerpathogens/plasmidtron)  
 
 ## Contents
   * [Introduction](#introduction)
