@@ -11,5 +11,9 @@ env:
   - KMC_VERSION=2.3.0
 install:
   - "source ./install_dependancies.sh"
+before_script:
+  - pip install codecov
 script:
-  - "./run_tests.sh" 
+  - "coverage run run_tests.sh" 
+after_success:
+  - codecov
