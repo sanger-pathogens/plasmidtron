@@ -14,6 +14,6 @@ install:
 before_script:
   - pip install codecov
 script:
-  - "coverage run run_tests.sh" 
+  - "coverage run -m unittest discover -s plasmidtron/tests/ -p '*_test.py'" 
 after_success:
   - codecov
