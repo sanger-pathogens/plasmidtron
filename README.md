@@ -8,6 +8,7 @@ A kmer based approach for identifying plasmids.
 [![Container ready](https://img.shields.io/badge/container-ready-brightgreen.svg)](https://quay.io/repository/biocontainers/plasmidtron)  
 [![Docker Build Status](https://img.shields.io/docker/build/sangerpathogens/plasmidtron.svg)](https://hub.docker.com/r/sangerpathogens/plasmidtron)  
 [![Docker Pulls](https://img.shields.io/docker/pulls/sangerpathogens/plasmidtron.svg)](https://hub.docker.com/r/sangerpathogens/plasmidtron)  
+[![codecov](https://codecov.io/gh/sanger-pathogens/plasmidtron/branch/master/graph/badge.svg)](https://codecov.io/gh/sanger-pathogens/plasmidtron)
 
 ## Contents
   * [Introduction](#introduction)
