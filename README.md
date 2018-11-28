@@ -17,6 +17,7 @@ A kmer based approach for identifying plasmids.
     * [Required resources](#required-resources)
     * [Linux](#linux)
     * [Linux/OSX/Windows/Cloud](#linuxosxwindowscloud)
+    * [Running the tests](#running-the-tests)
   * [Usage](#usage)
     * [Input files](#input-files)
     * [Input parameters](#input-parameters)
@@ -113,6 +114,10 @@ First install conda and setup the channels for bioconda.
 ```
 conda install plasmidtron
 ```
+### Running the tests
+The test can be run from the top level directory:  
+
+`./run_tests.sh`
 
 ## Usage
 ```
