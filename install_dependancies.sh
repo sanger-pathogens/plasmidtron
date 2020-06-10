@@ -80,5 +80,5 @@ update_path ${build_dir}
 update_path "${spades_dir}/bin"
 update_path "${PARALLEL_BUILD_DIR}/src"
 
-pip install pyfastaq biopython matplotlib
+pip install pyfastaq biopython==1.76 matplotlib
 
