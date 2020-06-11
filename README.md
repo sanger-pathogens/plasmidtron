@@ -51,7 +51,7 @@ The largest consumer of RAM (memory) is SPAdes. Assembling a whole bacteria take
 #### Disk space
 By default all of the intermediate files are cleaned up at the end, so the overall disk space usage is quite low. As an example, an input of 800 Mbytes of compressed reads created 40 Mbytes of output data at the end. While the algorithm is running the disk usage will never exceed the size of the input reads. The intermediate files can be kept if you use the 'verbose' option.
    
-There are a number of installation methods. Choosing the right one for the system you use will simpliy the process. If you encounter an issue when installing PlasmidTron please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/plasmidtron/issues) or email us at plasmidtron-help@sanger.ac.uk.
+There are a number of installation methods. Choosing the right one for the system you use will simpliy the process. If you encounter an issue when installing PlasmidTron please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/plasmidtron/issues).
 
 * Linux
   * Debian Testing/Ubuntu 16.04 (Xenial)
@@ -232,7 +232,7 @@ optional arguments:
 PlasmidTron is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/plasmidtron/blob/master/LICENSE).
 
 ## Feedback/Issues
-Please report any issues to the [issues page](https://github.com/sanger-pathogens/plasmidtron/issues) or email plasmidtron-help@sanger.ac.uk.
+Please report any issues to the [issues page](https://github.com/sanger-pathogens/plasmidtron/issues).
 
 ## Citation
 If you use this software please cite:
